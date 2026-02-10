@@ -1,6 +1,7 @@
-import { Text, View } from "react-native";
-
+import { useRouter } from "expo-router";
+import { Button, Text, View } from "react-native";
 export default function Index() {
+  const router = useRouter();
   return (
     <View
       style={{
@@ -10,6 +11,10 @@ export default function Index() {
       }}
     >
       <Text>Edit app/index.tsx to edit this screen.</Text>
+      <Button
+        title="Go to Calendar"
+        onPress={() => router.navigate("/calendar")}
+      />
     </View>
   );
 }
