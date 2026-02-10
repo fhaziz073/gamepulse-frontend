@@ -1,4 +1,3 @@
-import { BalldontlieAPI } from "@balldontlie/sdk";
 import React, { useEffect, useState } from "react";
 import {
   // Calendar,
@@ -10,30 +9,13 @@ import {
 import { Positions } from "react-native-calendars/src/expandableCalendar";
 import { Event } from "react-native-calendars/src/timeline/EventBlock";
 
-const api = new BalldontlieAPI({
-  apiKey: "insert_api_key",
-});
 const getGames = async (
-  day: string,
   setEvents: React.Dispatch<React.SetStateAction<Event[]>>,
 ) => {
-  let dates = [day];
-  console.log(dates);
-  try {
-    let games = await api.nba.getGames({ team_ids: [1], dates });
-    console.log(JSON.stringify(games));
-    let event: Event[] = [
-      {
-        start: `${day} 09:20:00`,
-        end: `${day} 12:00:00`,
-        title: "Game 1",
-      },
-    ];
-    console.log(event);
-    setEvents(event);
-  } catch (e) {
-    console.log(e);
-  }
+  let response = await fetch("http://localhost:3000/calendar");
+  console.log(response);
+  let events = await response.json();
+  setEvents(events);
 };
 const today = new Date();
 export const getDate: (offset: number) => string = (offset = 0) =>
@@ -53,8 +35,7 @@ const App = () => {
       <ExpandableCalendar
         onDayPress={async (day) => {
           setSelected(day.dateString);
-          console.log(day.dateString);
-          await getGames(day.dateString, setEvents2);
+          await getGames(setEvents2);
         }}
         markedDates={{
           [selected]: {
