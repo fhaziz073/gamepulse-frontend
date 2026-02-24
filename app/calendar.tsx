@@ -1,4 +1,8 @@
+import filter from "lodash/filter";
+import find from "lodash/find";
+import groupBy from "lodash/groupBy";
 import React, { Component, useEffect, useState } from "react";
+import { Alert, Platform } from "react-native";
 import {
   // Calendar,
   CalendarProvider,
@@ -9,10 +13,6 @@ import {
   TimelineProps,
 } from "react-native-calendars";
 
-import filter from "lodash/filter";
-import find from "lodash/find";
-import groupBy from "lodash/groupBy";
-import { Alert } from "react-native";
 type event = {
   start: string;
   end: string;
@@ -192,7 +192,12 @@ export default function Index() {
   useEffect(() => {
     const getGames = async () => {
       try {
-        let response = await fetch("http://10.0.2.2:3000/calendar");
+        let response = null;
+        if (Platform.OS === "android") {
+          response = await fetch("http://10.0.2.2:3000/calendar");
+        } else {
+          response = await fetch("http://localhost:3000/calendar");
+        }
         console.log(response);
         let events = await response.json();
         console.log(events);
