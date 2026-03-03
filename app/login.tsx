@@ -12,9 +12,10 @@ export default function Index() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#00ced1"
       }}
     >
-      <Text style={styles.header}>Sign In To Gamepulse</Text>
+      <Text style={styles.header}>Sign in to Gamepulse</Text>
       <TextInput
         placeholder="Username"
         style={styles.container}
@@ -39,8 +40,11 @@ const styles = EStyleSheet.create({
     margin: "1rem",
   },
   button: {
-    backgroundColor: "green",
+    backgroundColor: "#045c5a",
     color: "white",
+    padding: "1rem",
+    margin: "1rem",
+
   },
   header: {
     fontSize: "2rem",
