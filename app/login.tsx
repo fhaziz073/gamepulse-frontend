@@ -44,7 +44,6 @@ const styles = EStyleSheet.create({
     color: "white",
     padding: "1rem",
     margin: "1rem",
-
   },
   header: {
     fontSize: "2rem",
