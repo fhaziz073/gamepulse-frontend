@@ -1,10 +1,17 @@
 import { Stack } from "expo-router";
 import EStyleSheet from "react-native-extended-stylesheet";
+export const isLoggedIn = false;
 export default function RootLayout() {
   return (
     <Stack>
-      <Stack.Screen name="calendar" options={{ headerTitle: "" }} />
-      <Stack.Screen name="index" options={{ headerTitle: "Home" }} />
+      <Stack.Protected guard={!isLoggedIn}>
+        <Stack.Screen name="login" />
+        <Stack.Screen name="signup" />
+      </Stack.Protected>
+      <Stack.Protected guard={isLoggedIn}>
+        <Stack.Screen name="calendar" options={{ headerTitle: "" }} />
+        <Stack.Screen name="index" options={{ headerTitle: "Home" }} />
+      </Stack.Protected>
     </Stack>
   );
 }

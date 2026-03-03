@@ -15,6 +15,14 @@ export default function Index() {
         title="Go to Calendar"
         onPress={() => router.navigate("/calendar")}
       />
+      <Button
+        title="Go to Login Screen"
+        onPress={() => router.navigate("/calendar")}
+      />
+      <Button
+        title="Go to Signup Screen"
+        onPress={() => router.navigate("/calendar")}
+      />
     </View>
   );
 }
