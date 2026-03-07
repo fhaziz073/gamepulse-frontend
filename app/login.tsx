@@ -1,9 +1,11 @@
+import { changeLoginStatus } from "@/features/stateSlice";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
-
+import { useAppDispatch } from "./hooks";
 export default function Index() {
+  const dispatch = useAppDispatch();
   const [username, changeUsername] = useState("");
   const [password, changePassword] = useState("");
   return (
@@ -27,7 +29,12 @@ export default function Index() {
         value={password}
         onChangeText={changePassword}
       />
-      <Pressable style={styles.button}>Submit</Pressable>
+      <Pressable
+        style={styles.button}
+        onPress={() => dispatch(changeLoginStatus())}
+      >
+        Submit
+      </Pressable>
       <Link href={"/signup"}>No Account? Create One</Link>
     </View>
   );

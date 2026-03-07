@@ -1,7 +1,17 @@
 import { Stack } from "expo-router";
 import EStyleSheet from "react-native-extended-stylesheet";
-export const isLoggedIn = false;
+import { Provider } from "react-redux";
+import { useAppSelector } from "./hooks";
+import { store } from "./store";
 export default function RootLayout() {
+  return (
+    <Provider store={store}>
+      <StackLayout />
+    </Provider>
+  );
+}
+function StackLayout() {
+  const isLoggedIn = useAppSelector((state) => state.state.isLoggedIn);
   return (
     <Stack>
       <Stack.Protected guard={!isLoggedIn}>
@@ -9,8 +19,8 @@ export default function RootLayout() {
         <Stack.Screen name="signup" />
       </Stack.Protected>
       <Stack.Protected guard={isLoggedIn}>
-        <Stack.Screen name="calendar" options={{ headerTitle: "" }} />
         <Stack.Screen name="index" options={{ headerTitle: "Home" }} />
+        <Stack.Screen name="calendar" options={{ headerTitle: "" }} />
       </Stack.Protected>
     </Stack>
   );

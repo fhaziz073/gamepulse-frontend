@@ -1,7 +1,10 @@
+import { changeLoginStatus } from "@/features/stateSlice";
 import { useRouter } from "expo-router";
 import { Button, Text, View } from "react-native";
+import { useAppDispatch } from "./hooks";
 export default function Index() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   return (
     <View
       style={{
@@ -15,14 +18,7 @@ export default function Index() {
         title="Go to Calendar"
         onPress={() => router.navigate("/calendar")}
       />
-      <Button
-        title="Go to Login Screen"
-        onPress={() => router.navigate("/calendar")}
-      />
-      <Button
-        title="Go to Signup Screen"
-        onPress={() => router.navigate("/calendar")}
-      />
+      <Button title="Log Out" onPress={() => dispatch(changeLoginStatus())} />
     </View>
   );
 }
