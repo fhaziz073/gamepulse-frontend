@@ -39,11 +39,7 @@ class TimelineCalendarScreen extends Component<Props, {}> {
   };
 
   marked = {
-    // [`${getDate(-1)}`]: { marked: true },
-    // [`${getDate(0)}`]: { marked: true },
-    // [`${getDate(1)}`]: { marked: true },
-    // [`${getDate(2)}`]: { marked: true },
-    // [`${getDate(4)}`]: { marked: true },
+    [`${getDate(0)}`]: { marked: false },
   };
   componentDidUpdate(prevProps: Props) {
     if (prevProps.newEvents !== this.props.newEvents) {
@@ -53,6 +49,9 @@ class TimelineCalendarScreen extends Component<Props, {}> {
           CalendarUtils.getCalendarDateString(e.start),
         ),
       });
+      for (let event of this.props.newEvents) {
+        this.marked[event.start.slice(0, 10)] = { marked: true };
+      }
     }
   }
   onDateChanged = (date: string, source: string) => {
