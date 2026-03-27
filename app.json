@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Gamepulse",
-    "slug": "Gamepulse",
+    "slug": "gamepulse",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -43,6 +43,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b5636ef6-e63f-4f80-8753-3b691d32cd63"
+      }
+    },
+    "owner": "seniordesign2026"
   }
 }

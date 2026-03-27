@@ -11,7 +11,7 @@ export default function RootLayout() {
   );
 }
 function StackLayout() {
-  const isLoggedIn = useAppSelector((state) => state.state.isLoggedIn);
+  const isLoggedIn = useAppSelector((state) => state.isLoggedIn);
   return (
     <Stack>
       <Stack.Protected guard={!isLoggedIn}>
