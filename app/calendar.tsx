@@ -39,7 +39,7 @@ class TimelineCalendarScreen extends Component<Props, {}> {
   };
 
   marked = {
-    [`${getDate(0)}`]: { marked: true },
+    [`${getDate(0)}`]: { marked: false },
   };
   componentDidUpdate(prevProps: Props) {
     if (prevProps.newEvents !== this.props.newEvents) {
@@ -170,7 +170,20 @@ class TimelineCalendarScreen extends Component<Props, {}> {
           firstDay={1}
           leftArrowImageSource={require("../assets/images/previous.png")}
           rightArrowImageSource={require("../assets/images/next.png")}
-          markedDates={this.marked}
+          markedDates={{
+            ...this.marked,
+            ...{
+              [currentDate]: {
+                marked: true,
+                selectedColor: "blue",
+                customContainerStyle: {
+                  borderWidth: 2,
+                  borderColor: "red",
+                  borderRadius: 16,
+                },
+              },
+            },
+          }}
         />
         <TimelineList
           events={eventsByDate}
