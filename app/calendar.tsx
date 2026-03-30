@@ -39,7 +39,7 @@ class TimelineCalendarScreen extends Component<Props, {}> {
   };
 
   marked = {
-    [`${getDate(0)}`]: { marked: false },
+    [`${getDate(0)}`]: { marked: true },
   };
   componentDidUpdate(prevProps: Props) {
     if (prevProps.newEvents !== this.props.newEvents) {
@@ -193,9 +193,13 @@ export default function Index() {
       try {
         let response = null;
         if (Platform.OS === "android") {
-          response = await fetch("http://10.0.2.2:3000/calendar");
+          response = await fetch(
+            "https://gamepulse-backend.onrender.com/calendar",
+          );
         } else {
-          response = await fetch("http://localhost:3000/calendar");
+          response = await fetch(
+            "https://gamepulse-backend.onrender.com/calendar",
+          );
         }
         console.log(response);
         let events = await response.json();
