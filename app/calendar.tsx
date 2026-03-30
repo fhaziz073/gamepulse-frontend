@@ -1,16 +1,13 @@
-import filter from "lodash/filter";
-import find from "lodash/find";
 import groupBy from "lodash/groupBy";
 import React, { Component, useEffect, useState } from "react";
-import { Alert, Platform } from "react-native";
+import { Platform } from "react-native";
 import {
-  // Calendar,
   CalendarProvider,
   CalendarUtils,
   ExpandableCalendar,
   TimelineEventProps,
   TimelineList,
-  TimelineProps,
+  TimelineProps
 } from "react-native-calendars";
 
 type event = {
@@ -37,7 +34,6 @@ class TimelineCalendarScreen extends Component<Props, {}> {
       [key: string]: TimelineEventProps[];
     },
   };
-
   marked = {
     [`${getDate(0)}`]: { marked: false },
   };
@@ -63,87 +59,8 @@ class TimelineCalendarScreen extends Component<Props, {}> {
     console.log("TimelineCalendarScreen onMonthChange: ", month, updateSource);
   };
 
-  createNewEvent: TimelineProps["onBackgroundLongPress"] = (
-    timeString,
-    timeObject,
-  ) => {
-    const { eventsByDate } = this.state;
-    const hourString = `${(timeObject.hour + 1).toString().padStart(2, "0")}`;
-    const minutesString = `${timeObject.minutes.toString().padStart(2, "0")}`;
-
-    const newEvent = {
-      id: "draft",
-      start: `${timeString}`,
-      end: `${timeObject.date} ${hourString}:${minutesString}:00`,
-      title: "New Event",
-      color: "white",
-    };
-
-    if (timeObject.date) {
-      if (eventsByDate[timeObject.date]) {
-        eventsByDate[timeObject.date] = [
-          ...eventsByDate[timeObject.date],
-          newEvent,
-        ];
-        this.setState({ eventsByDate });
-      } else {
-        eventsByDate[timeObject.date] = [newEvent];
-        this.setState({ eventsByDate: { ...eventsByDate } });
-      }
-    }
-  };
-
-  approveNewEvent: TimelineProps["onBackgroundLongPressOut"] = (
-    _timeString,
-    timeObject,
-  ) => {
-    const { eventsByDate } = this.state;
-
-    Alert.prompt("New Event", "Enter event title", [
-      {
-        text: "Cancel",
-        onPress: () => {
-          if (timeObject.date) {
-            eventsByDate[timeObject.date] = filter(
-              eventsByDate[timeObject.date],
-              (e) => e.id !== "draft",
-            );
-
-            this.setState({
-              eventsByDate,
-            });
-          }
-        },
-      },
-      {
-        text: "Create",
-        onPress: (eventTitle: string | undefined) => {
-          if (timeObject.date) {
-            const draftEvent = find(eventsByDate[timeObject.date], {
-              id: "draft",
-            });
-            if (draftEvent) {
-              draftEvent.id = undefined;
-              draftEvent.title = eventTitle ?? "New Event";
-              draftEvent.color = "lightgreen";
-              eventsByDate[timeObject.date] = [
-                ...eventsByDate[timeObject.date],
-              ];
-
-              this.setState({
-                eventsByDate,
-              });
-            }
-          }
-        },
-      },
-    ]);
-  };
-
   private timelineProps: Partial<TimelineProps> = {
     format24h: true,
-    onBackgroundLongPress: this.createNewEvent,
-    onBackgroundLongPressOut: this.approveNewEvent,
     // scrollToFirst: true,
     // start: 0,
     // end: 24,
@@ -170,19 +87,24 @@ class TimelineCalendarScreen extends Component<Props, {}> {
           firstDay={1}
           leftArrowImageSource={require("../assets/images/previous.png")}
           rightArrowImageSource={require("../assets/images/next.png")}
+          markingType="period"
           markedDates={{
             ...this.marked,
             ...{
               [currentDate]: {
-                marked: true,
-                selectedColor: "blue",
+                marked: false,
                 customContainerStyle: {
-                  borderWidth: 2,
-                  borderColor: "red",
-                  borderRadius: 16,
+                  backgroundColor: "#FF0000B3",
                 },
               },
             },
+          }}
+          theme={{
+          todayTextColor: '#0F55D7',
+          textSectionTitleColor: '#568F74',
+          textDayFontFamily: 'Verdana',
+          textMonthFontFamily: 'Verdana',
+          textMonthFontWeight: 'bold'
           }}
         />
         <TimelineList
