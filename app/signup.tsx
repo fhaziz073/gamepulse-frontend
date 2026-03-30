@@ -49,35 +49,19 @@ async function signup(
     }
   }
   let response = null;
-  if (Platform.OS === "android") {
-    response = await fetch("https://gamepulse-backend.onrender.com/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-        avatarUrl,
-        email,
-        notif_token: notifToken,
-      }),
-    });
-  } else {
-    response = await fetch(`https://gamepulse-backend.onrender.com/users`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-        avatarUrl,
-        email,
-        notif_token: notifToken,
-      }),
-    });
-  }
+  response = await fetch("https://gamepulse-backend.onrender.com/users", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      username,
+      password,
+      avatarUrl,
+      email,
+      notif_token: notifToken,
+    }),
+  });
   console.log(response);
   if (response !== null && response.status === 201) {
     dispatch(changeLoginStatus());

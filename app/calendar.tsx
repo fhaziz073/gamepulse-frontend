@@ -1,14 +1,16 @@
 import groupBy from "lodash/groupBy";
 import React, { Component, useEffect, useState } from "react";
-import { Platform } from "react-native";
+import { View } from "react-native";
 import {
   CalendarProvider,
   CalendarUtils,
   ExpandableCalendar,
   TimelineEventProps,
   TimelineList,
-  TimelineProps
+  TimelineProps,
 } from "react-native-calendars";
+import EStyleSheet from "react-native-extended-stylesheet";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 type event = {
   start: string;
@@ -81,7 +83,7 @@ class TimelineCalendarScreen extends Component<Props, {}> {
         onMonthChange={this.onMonthChange}
         showTodayButton
         disabledOpacity={0.6}
-        // numberOfDays={3}
+        style={{ flex: 1 }}
       >
         <ExpandableCalendar
           firstDay={1}
@@ -95,26 +97,29 @@ class TimelineCalendarScreen extends Component<Props, {}> {
                 marked: false,
                 customContainerStyle: {
                   backgroundColor: "#FF0000B3",
+                  width: 30,
+                  height: 30,
                 },
               },
             },
           }}
           theme={{
-          todayTextColor: '#0F55D7',
-          textSectionTitleColor: '#568F74',
-          textDayFontFamily: 'Verdana',
-          textMonthFontFamily: 'Verdana',
-          textMonthFontWeight: 'bold'
+            todayTextColor: "#0F55D7",
+            textSectionTitleColor: "#568F74",
+            textDayFontFamily: "Verdana",
+            textMonthFontFamily: "Verdana",
+            textMonthFontWeight: "bold",
           }}
         />
-        <TimelineList
-          events={eventsByDate}
-          timelineProps={this.timelineProps}
-          showNowIndicator
-          // scrollToNow
-          scrollToFirst
-          initialTime={INITIAL_TIME}
-        />
+        <View style={styles.timeline}>
+          <TimelineList
+            events={eventsByDate}
+            timelineProps={this.timelineProps}
+            showNowIndicator
+            scrollToNow
+            initialTime={INITIAL_TIME}
+          />
+        </View>
       </CalendarProvider>
     );
   }
@@ -127,15 +132,9 @@ export default function Index() {
     const getGames = async () => {
       try {
         let response = null;
-        if (Platform.OS === "android") {
-          response = await fetch(
-            "https://gamepulse-backend.onrender.com/calendar",
-          );
-        } else {
-          response = await fetch(
-            "https://gamepulse-backend.onrender.com/calendar",
-          );
-        }
+        response = await fetch(
+          "https://gamepulse-backend.onrender.com/calendar",
+        );
         console.log(response);
         let events = await response.json();
         console.log(events);
@@ -178,5 +177,16 @@ export default function Index() {
   }, []);
   console.log(data);
   console.log(broadcasts);
-  return <TimelineCalendarScreen newEvents={data} />;
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <TimelineCalendarScreen newEvents={data} />
+      </SafeAreaView>
+    </SafeAreaProvider>
+  );
 }
+const styles = EStyleSheet.create({
+  timeline: {
+    maxHeight: "36rem",
+  },
+});
