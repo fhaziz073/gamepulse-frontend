@@ -1,6 +1,6 @@
 import groupBy from "lodash/groupBy";
 import React, { Component, useEffect, useState } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import {
   CalendarProvider,
   CalendarUtils,
@@ -11,6 +11,8 @@ import {
 } from "react-native-calendars";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { useAppSelector } from "./hooks";
+import { sendPushNotification } from "./push_notifications";
 
 type event = {
   start: string;
@@ -128,6 +130,7 @@ class TimelineCalendarScreen extends Component<Props, {}> {
 export default function Index() {
   const [data, setData] = useState<event[]>([]);
   const [broadcasts, setBroadcasts] = useState<any>([]);
+  const notifToken = useAppSelector((state) => state.notifToken);
   useEffect(() => {
     const getGames = async () => {
       try {
@@ -168,6 +171,12 @@ export default function Index() {
           }
         }
         setBroadcasts(broadcasts);
+        if (
+          notifToken !== null &&
+          (Platform.OS === "ios" || Platform.OS === "android")
+        ) {
+          sendPushNotification(notifToken);
+        }
       } catch {
         console.log("Failed to fetch data");
         setBroadcasts([]);
