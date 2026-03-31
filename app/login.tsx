@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { PersistPartial } from "redux-persist/es/persistReducer";
+import { link } from "./_layout";
 import { useAppDispatch } from "./hooks";
 async function login(
   username: string,
@@ -22,7 +23,7 @@ async function login(
   console.log(password);
   let response = null;
   const authHeader = "Basic " + btoa(`${username}:${password}`);
-  response = await fetch("https://gamepulse-backend.onrender.com/auth/login", {
+  response = await fetch(`${link}/auth/login`, {
     method: "POST",
     headers: {
       Authorization: authHeader,

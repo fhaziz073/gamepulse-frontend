@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { PersistPartial } from "redux-persist/es/persistReducer";
+import { link } from "./_layout";
 import { useAppDispatch } from "./hooks";
 import { registerForPushNotificationsAsync } from "./push_notifications";
 async function signup(
@@ -49,7 +50,7 @@ async function signup(
     }
   }
   let response = null;
-  response = await fetch("https://gamepulse-backend.onrender.com/users", {
+  response = await fetch(`${link}/users`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

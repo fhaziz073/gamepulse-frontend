@@ -11,6 +11,7 @@ import {
 } from "react-native-calendars";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { link } from "./_layout";
 import { useAppSelector } from "./hooks";
 import { sendPushNotification } from "./push_notifications";
 
@@ -135,9 +136,7 @@ export default function Index() {
     const getGames = async () => {
       try {
         let response = null;
-        response = await fetch(
-          "https://gamepulse-backend.onrender.com/calendar",
-        );
+        response = await fetch(`${link}/calendar`);
         console.log(response);
         let events = await response.json();
         console.log(events);
