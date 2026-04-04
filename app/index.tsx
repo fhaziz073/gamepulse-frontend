@@ -19,6 +19,10 @@ export default function Index() {
         onPress={() => router.navigate("/calendar")}
       />
       <Button
+        title="Go to Preferences"
+        onPress={() => router.navigate("/preferences")}
+      />
+      <Button
         title="Log Out"
         onPress={() => {
           dispatch(changeLoginStatus());
