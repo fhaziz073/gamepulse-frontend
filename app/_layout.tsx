@@ -3,7 +3,7 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import { Provider } from "react-redux";
 import { useAppSelector } from "./hooks";
 import { store } from "./store";
-export const link = "http://localhost:3000/";
+export const link = "https://gamepulse-backend.onrender.com";
 export default function RootLayout() {
   return (
     <Provider store={store}>
