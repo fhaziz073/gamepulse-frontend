@@ -1,4 +1,4 @@
-import { changeLoginStatus, setNotifToken } from "@/features/stateSlice";
+import { setUserInfo } from "@/features/stateSlice";
 import { useRouter } from "expo-router";
 import { Button, Text, View } from "react-native";
 import { useAppDispatch } from "./hooks";
@@ -25,8 +25,7 @@ export default function Index() {
       <Button
         title="Log Out"
         onPress={() => {
-          dispatch(changeLoginStatus());
-          dispatch(setNotifToken(null));
+          dispatch(setUserInfo(null));
         }}
       />
     </View>

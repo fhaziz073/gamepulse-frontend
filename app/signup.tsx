@@ -1,4 +1,4 @@
-import { changeLoginStatus } from "@/features/stateSlice";
+import { setUserInfo } from "@/features/stateSlice";
 import { Dispatch, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { Checkbox } from "expo-checkbox";
 import { Link } from "expo-router";
@@ -65,7 +65,8 @@ async function signup(
   });
   console.log(response);
   if (response !== null && response.status === 201) {
-    dispatch(changeLoginStatus());
+    const json = await response.json();
+    dispatch(setUserInfo(json));
   }
 }
 

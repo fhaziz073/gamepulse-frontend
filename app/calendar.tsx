@@ -131,7 +131,9 @@ class TimelineCalendarScreen extends Component<Props, {}> {
 export default function Index() {
   const [data, setData] = useState<event[]>([]);
   const [broadcasts, setBroadcasts] = useState<any>([]);
-  const notifToken = useAppSelector((state) => state.notifToken);
+  const notifToken = useAppSelector(
+    (state) => state.userInfo?.["Notification Token"],
+  );
   useEffect(() => {
     const getGames = async () => {
       try {
@@ -174,7 +176,7 @@ export default function Index() {
           notifToken !== null &&
           (Platform.OS === "ios" || Platform.OS === "android")
         ) {
-          sendPushNotification(notifToken);
+          sendPushNotification(notifToken!);
         }
       } catch {
         console.log("Failed to fetch data");
@@ -182,7 +184,7 @@ export default function Index() {
       }
     };
     getBroadcasts();
-  }, []);
+  }, [notifToken]);
   console.log(data);
   console.log(broadcasts);
   return (

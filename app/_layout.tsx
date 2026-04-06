@@ -3,7 +3,7 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import { Provider } from "react-redux";
 import { useAppSelector } from "./hooks";
 import { store } from "./store";
-export const link = "https://gamepulse-backend.onrender.com";
+export const link = "http://localhost:3000/";
 export default function RootLayout() {
   return (
     <Provider store={store}>
@@ -12,14 +12,14 @@ export default function RootLayout() {
   );
 }
 function StackLayout() {
-  const isLoggedIn = useAppSelector((state) => state.isLoggedIn);
+  const isLoggedIn = useAppSelector((state) => state.userInfo);
   return (
     <Stack>
       <Stack.Protected guard={!isLoggedIn}>
         <Stack.Screen name="login" />
         <Stack.Screen name="signup" />
       </Stack.Protected>
-      <Stack.Protected guard={isLoggedIn}>
+      <Stack.Protected guard={!!isLoggedIn}>
         <Stack.Screen name="index" options={{ headerTitle: "Home" }} />
         <Stack.Screen name="calendar" options={{ headerTitle: "" }} />
       </Stack.Protected>

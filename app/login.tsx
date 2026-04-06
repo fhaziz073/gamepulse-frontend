@@ -1,4 +1,4 @@
-import { changeLoginStatus, setNotifToken } from "@/features/stateSlice";
+import { setUserInfo } from "@/features/stateSlice";
 import { Dispatch, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { Link } from "expo-router";
 import { useState } from "react";
@@ -37,8 +37,7 @@ async function login(
   if (response !== null && response.status === 201) {
     let data = await response.json();
     console.log(data);
-    dispatch(changeLoginStatus());
-    dispatch(setNotifToken(data["Notification Token"]));
+    dispatch(setUserInfo(data));
   }
 }
 export default function Index() {
