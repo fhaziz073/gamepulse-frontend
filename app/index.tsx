@@ -22,6 +22,7 @@ export default function Index() {
         title="Go to Preferences"
         onPress={() => router.navigate("/preferences")}
       />
+      <Button title="Go to Player" onPress={() => router.navigate("/player")} />
       <Button
         title="Log Out"
         onPress={() => {
