@@ -1,44 +1,54 @@
 import { Image, Text, View } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Player() {
   return (
-    <View style={{ flex: 1, flexDirection: "column" }}>
+    <View style={{ flex: 1, flexDirection: "column"}}>
+        <LinearGradient
+            // Background Linear Gradient
+            colors={['rgba(0,0,255,1)', 'rgba(255, 236, 0, 1)', 'transparent']}
+            style={{position: 'absolute',
+                left: 0,
+                right: 0,
+                top: 0,
+                height: 800,
+            }}
+        />
       <View style={{ flexDirection: "row" }}>
         <Image source={require("../assets/images/jokic.jpg")} />
         <View style={{ flexDirection: "column" }}>
-          <Text>Nikola Jokic</Text>
+          <Text style = {{color: "white"}}>Nikola Jokic</Text>
           <View
             style={{ flexDirection: "row", justifyContent: "space-around" }}
           >
-            <Text>Denver Nuggets</Text>
-            <Text>C</Text>
-            <Text>#15</Text>
+            <Text style = {{color: "white"}}>Denver Nuggets</Text>
+            <Text style = {{color: "white"}}>C</Text>
+            <Text style = {{color: "white"}}>#15</Text>
           </View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-around" }}
           >
             <View style={{ flexDirection: "column", alignItems: "center" }}>
-              <Text>HT</Text>
-              <Text>6&apos;11&apos;</Text>
+              <Text style = {{color: "white"}}>HT</Text>
+              <Text style = {{color: "white"}}>6&apos;11&apos;</Text>
             </View>
             <View style={{ flexDirection: "column", alignItems: "center" }}>
-              <Text>Age</Text>
-              <Text>30</Text>
+              <Text style = {{color: "white"}}>Age</Text>
+              <Text style = {{color: "white"}}>30</Text>
             </View>
             <View style={{ flexDirection: "column", alignItems: "center" }}>
-              <Text>Weight</Text>
-              <Text>284</Text>
+              <Text style = {{color: "white"}}>Weight</Text>
+              <Text style = {{color: "white"}}>284</Text>
             </View>
           </View>
         </View>
       </View>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", backgroundColor: "red" }}>
         <Text>INJURED Status</Text>
         <Text>Out (Knee)</Text>
       </View>
       <View
         style={{
-          backgroundColor: "white",
           overflow: "hidden",
           borderRadius: 3,
           alignItems: "center",
@@ -65,7 +75,6 @@ export default function Player() {
       </View>
       <View
         style={{
-          backgroundColor: "white",
           overflow: "hidden",
           borderRadius: 3,
           alignItems: "center",
@@ -88,7 +97,6 @@ export default function Player() {
       </View>
       <View
         style={{
-          backgroundColor: "white",
           overflow: "hidden",
           borderRadius: 3,
           alignItems: "center",
