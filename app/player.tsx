@@ -35,68 +35,28 @@ export default function Player() {
       <View style={{ flexDirection: "row" }}>
         <Image source={require("../assets/images/jokic.jpg")} />
         <View style={{ flexDirection: "column" }}>
-          <Text
-            style={{ color: "white", fontFamily: "JosefinSans_400Regular" }}
-          >
-            Nikola Jokic
-          </Text>
+          <Text style={styles.playerName}>Nikola Jokic</Text>
           <View
             style={{ flexDirection: "row", justifyContent: "space-around" }}
           >
-            <Text
-              style={{ color: "white", fontFamily: "JosefinSans_400Regular" }}
-            >
-              Denver Nuggets
-            </Text>
-            <Text
-              style={{ color: "white", fontFamily: "JosefinSans_400Regular" }}
-            >
-              C
-            </Text>
-            <Text
-              style={{ color: "white", fontFamily: "JosefinSans_400Regular" }}
-            >
-              #15
-            </Text>
+            <Text style={styles.playerInfo}>Denver Nuggets</Text>
+            <Text style={styles.playerInfo}>C</Text>
+            <Text style={styles.playerInfo}>#15</Text>
           </View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-around" }}
           >
             <View style={{ flexDirection: "column", alignItems: "center" }}>
-              <Text
-                style={{ color: "white", fontFamily: "JosefinSans_400Regular" }}
-              >
-                HT
-              </Text>
-              <Text
-                style={{ color: "white", fontFamily: "IstokWeb_400Regular" }}
-              >
-                6&apos;11&apos;
-              </Text>
+              <Text style={styles.playerMeasurableHeaders}>HT</Text>
+              <Text style={styles.playerMeasurables}>6&apos;11&apos;</Text>
             </View>
             <View style={{ flexDirection: "column", alignItems: "center" }}>
-              <Text
-                style={{ color: "white", fontFamily: "JosefinSans_400Regular" }}
-              >
-                Age
-              </Text>
-              <Text
-                style={{ color: "white", fontFamily: "IstokWeb_400Regular" }}
-              >
-                30
-              </Text>
+              <Text style={styles.playerMeasurableHeaders}>Age</Text>
+              <Text style={styles.playerMeasurables}>30</Text>
             </View>
             <View style={{ flexDirection: "column", alignItems: "center" }}>
-              <Text
-                style={{ color: "white", fontFamily: "JosefinSans_400Regular" }}
-              >
-                Weight
-              </Text>
-              <Text
-                style={{ color: "white", fontFamily: "IstokWeb_400Regular" }}
-              >
-                284
-              </Text>
+              <Text style={styles.playerMeasurableHeaders}>Weight</Text>
+              <Text style={styles.playerMeasurables}>284</Text>
             </View>
           </View>
         </View>
@@ -108,12 +68,8 @@ export default function Player() {
           backgroundColor: "red",
         }}
       >
-        <Text style={{ fontFamily: "Kantumruy_300Light", color: "white" }}>
-          INJURY STATUS
-        </Text>
-        <Text style={{ fontFamily: "Kantumruy_300Light", color: "white" }}>
-          OUT (KNEE)
-        </Text>
+        <Text style={styles.injuryText}>INJURY STATUS</Text>
+        <Text style={styles.injuryText}>OUT (KNEE)</Text>
       </View>
       <View style={styles.container}>
         <Text
@@ -239,5 +195,30 @@ const styles = EStyleSheet.create({
     marginLeft: "1rem",
     marginRight: "1rem",
     flexDirection: "row",
+  },
+  playerName: {
+    color: "white",
+    fontFamily: "JosefinSans_400Regular",
+    fontSize: "5rem",
+  },
+  playerInfo: {
+    color: "white",
+    fontFamily: "JosefinSans_400Regular",
+    fontSize: "2rem",
+  },
+  playerMeasurableHeaders: {
+    color: "white",
+    fontFamily: "JosefinSans_400Regular",
+    fontSize: "1rem",
+  },
+  playerMeasurables: {
+    color: "white",
+    fontFamily: "IstokWeb_400Regular",
+    fontSize: "1rem",
+  },
+  injuryText: {
+    fontFamily: "Kantumruy_300Light",
+    color: "white",
+    fontSize: "1.5rem",
   },
 });
