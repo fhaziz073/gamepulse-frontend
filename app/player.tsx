@@ -1,40 +1,26 @@
-import { IstokWeb_400Regular } from "@expo-google-fonts/istok-web";
-import {
-  JosefinSans_400Regular,
-  useFonts,
-} from "@expo-google-fonts/josefin-sans";
-import { Kantumruy_300Light } from "@expo-google-fonts/kantumruy";
 import { LinearGradient } from "expo-linear-gradient";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
-import { Image, Text, View } from "react-native";
+import { Image, ScrollView, Text, View } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
-SplashScreen.preventAutoHideAsync();
 export default function Player() {
-  const [loaded, error] = useFonts({
-    JosefinSans_400Regular,
-    IstokWeb_400Regular,
-    Kantumruy_300Light,
-  });
-  useEffect(() => {
-    if (loaded || error) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded, error]);
-
-  if (!loaded && !error) {
-    return null;
-  }
   return (
-    <View style={{ flex: 1, flexDirection: "column" }}>
+    <ScrollView
+      style={{ flex: 1, flexDirection: "column" }}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
       <LinearGradient
         // Background Linear Gradient
         colors={["rgba(0,0,255,1)", "rgba(255, 236, 0, 1)"]}
         style={{ height: "100%", width: "100%", position: "absolute" }}
       />
-      <View style={{ flexDirection: "row" }}>
-        <Image source={require("../assets/images/jokic.jpg")} />
-        <View style={{ flexDirection: "column" }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+        <Image
+          style={styles.playerImage}
+          resizeMode="contain"
+          source={require("../assets/images/jokic.jpg")}
+        />
+        <View
+          style={{ flexDirection: "column", justifyContent: "space-evenly" }}
+        >
           <Text style={styles.playerName}>Nikola Jokic</Text>
           <View
             style={{ flexDirection: "row", justifyContent: "space-around" }}
@@ -46,96 +32,57 @@ export default function Player() {
           <View
             style={{ flexDirection: "row", justifyContent: "space-around" }}
           >
-            <View style={{ flexDirection: "column", alignItems: "center" }}>
+            <View style={styles.playerMeasurableRow}>
               <Text style={styles.playerMeasurableHeaders}>HT</Text>
               <Text style={styles.playerMeasurables}>6&apos;11&apos;</Text>
             </View>
-            <View style={{ flexDirection: "column", alignItems: "center" }}>
+            <View style={styles.playerMeasurableRow}>
               <Text style={styles.playerMeasurableHeaders}>Age</Text>
               <Text style={styles.playerMeasurables}>30</Text>
             </View>
-            <View style={{ flexDirection: "column", alignItems: "center" }}>
+            <View style={styles.playerMeasurableRow}>
               <Text style={styles.playerMeasurableHeaders}>Weight</Text>
               <Text style={styles.playerMeasurables}>284</Text>
             </View>
           </View>
         </View>
       </View>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          backgroundColor: "red",
-        }}
-      >
+      <View style={styles.injuryBar}>
         <Text style={styles.injuryText}>INJURY STATUS</Text>
         <Text style={styles.injuryText}>OUT (KNEE)</Text>
       </View>
       <View style={styles.container}>
-        <Text
-          style={{
-            textDecorationLine: "underline",
-            fontFamily: "JosefinSans_400Regular",
-          }}
-        >
-          2025-2026 Season Average
-        </Text>
+        <Text style={styles.seasonAvg}>2025-2026 Season Average</Text>
         <View style={{ flexDirection: "row" }}>
           <View style={{ flexDirection: "column" }}>
-            <Text
-              style={{
-                fontFamily: "JosefinSans_400Regular",
-              }}
-            >
-              PTS
-            </Text>
-            <Text style={{ fontFamily: "IstokWeb_400Regular" }}>29.6</Text>
+            <Text style={styles.seasonStat}>PTS</Text>
+            <Text style={styles.seasonStatVal}>29.6</Text>
           </View>
           <View style={{ flexDirection: "column" }}>
-            <Text
-              style={{
-                fontFamily: "JosefinSans_400Regular",
-              }}
-            >
-              REB
-            </Text>
-            <Text style={{ fontFamily: "IstokWeb_400Regular" }}>12.2</Text>
+            <Text style={styles.seasonStat}>REB</Text>
+            <Text style={styles.seasonStatVal}>12.2</Text>
           </View>
           <View style={{ flexDirection: "column" }}>
-            <Text
-              style={{
-                fontFamily: "JosefinSans_400Regular",
-              }}
-            >
-              AST
-            </Text>
-            <Text style={{ fontFamily: "IstokWeb_400Regular" }}>11.0</Text>
+            <Text style={styles.seasonStat}>AST</Text>
+            <Text style={styles.seasonStatVal}>11.0</Text>
           </View>
         </View>
       </View>
       <View style={styles.container}>
-        <Text
-          style={{
-            textDecorationLine: "underline",
-            fontFamily: "JosefinSans_400Regular",
-          }}
-        >
-          Next Game
-        </Text>
+        <Text style={styles.nextGameHeader}>Next Game</Text>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image
-            style={{ maxHeight: 150, maxWidth: 150 }}
+            style={styles.teamLogo}
+            resizeMode="contain"
             source={require("../assets/images/team_logos/Chicago Bulls.png")}
           />
-          <Text style={{ fontFamily: "IstokWeb_400Regular" }}>vs.</Text>
+          <Text style={styles.vs}>vs.</Text>
           <Image
-            style={{ maxHeight: 150, maxWidth: 150 }}
+            style={styles.teamLogo}
             source={require("../assets/images/team_logos/Denver Nuggets.png")}
           />
         </View>
-        <Text style={{ fontFamily: "IstokWeb_400Regular" }}>
-          Sat, Jan 17th 9:30 P.M.
-        </Text>
+        <Text style={styles.nextGameTime}>Sat, Jan 17th 9:30 P.M.</Text>
       </View>
       <View style={styles.statsContainer}>
         <View style={{ flexDirection: "column" }}>
@@ -167,7 +114,7 @@ export default function Player() {
           <Text style={styles.statsText}>36</Text>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -199,12 +146,12 @@ const styles = EStyleSheet.create({
   playerName: {
     color: "white",
     fontFamily: "JosefinSans_400Regular",
-    fontSize: "5rem",
+    fontSize: "2rem",
   },
   playerInfo: {
     color: "white",
     fontFamily: "JosefinSans_400Regular",
-    fontSize: "2rem",
+    fontSize: "1rem",
   },
   playerMeasurableHeaders: {
     color: "white",
@@ -217,8 +164,40 @@ const styles = EStyleSheet.create({
     fontSize: "1rem",
   },
   injuryText: {
-    fontFamily: "Kantumruy_300Light",
+    fontFamily: "KantumruyPro_300Light",
     color: "white",
     fontSize: "1.5rem",
   },
+  playerImage: {
+    height: "13rem",
+    width: "13rem",
+  },
+  playerMeasurableRow: { flexDirection: "column", alignItems: "center" },
+  seasonAvg: {
+    textDecorationLine: "underline",
+    fontFamily: "JosefinSans_400Regular",
+    fontSize: "1.5rem",
+  },
+  seasonStat: {
+    fontFamily: "JosefinSans_400Regular",
+  },
+  seasonStatVal: {
+    fontFamily: "IstokWeb_400Regular",
+  },
+  nextGameTime: {
+    fontFamily: "IstokWeb_400Regular",
+  },
+  vs: {
+    fontFamily: "IstokWeb_400Regular",
+  },
+  nextGameHeader: {
+    textDecorationLine: "underline",
+    fontFamily: "JosefinSans_400Regular",
+  },
+  injuryBar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "red",
+  },
+  teamLogo: { height: "4rem", maxWidth: "4rem" },
 });

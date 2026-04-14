@@ -39,7 +39,16 @@
           }
         }
       ],
-      "expo-font"
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/josefin-sans/400Regular/JosefinSans_400Regular.ttf",
+            "node_modules/@expo-google-fonts/kantumruy-pro/300Light/KantumruyPro_300Light.ttf",
+            "node_modules/@expo-google-fonts/istok-web/400Regular/IstokWeb_400Regular.ttf"
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
