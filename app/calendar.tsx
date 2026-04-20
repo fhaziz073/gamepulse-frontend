@@ -1,10 +1,7 @@
-import filter from "lodash/filter";
-import find from "lodash/find";
 import groupBy from "lodash/groupBy";
 import React, { Component, useEffect, useState } from "react";
-import { Alert, Platform } from "react-native";
+import { Platform, View } from "react-native";
 import {
-  // Calendar,
   CalendarProvider,
   CalendarUtils,
   ExpandableCalendar,
@@ -12,6 +9,11 @@ import {
   TimelineList,
   TimelineProps,
 } from "react-native-calendars";
+import EStyleSheet from "react-native-extended-stylesheet";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { link } from "./_layout";
+import { useAppSelector } from "./hooks";
+import { sendPushNotification } from "./push_notifications";
 
 type event = {
   start: string;
@@ -37,7 +39,6 @@ class TimelineCalendarScreen extends Component<Props, {}> {
       [key: string]: TimelineEventProps[];
     },
   };
-
   marked = {
     [`${getDate(0)}`]: { marked: false },
   };
@@ -63,87 +64,8 @@ class TimelineCalendarScreen extends Component<Props, {}> {
     console.log("TimelineCalendarScreen onMonthChange: ", month, updateSource);
   };
 
-  createNewEvent: TimelineProps["onBackgroundLongPress"] = (
-    timeString,
-    timeObject,
-  ) => {
-    const { eventsByDate } = this.state;
-    const hourString = `${(timeObject.hour + 1).toString().padStart(2, "0")}`;
-    const minutesString = `${timeObject.minutes.toString().padStart(2, "0")}`;
-
-    const newEvent = {
-      id: "draft",
-      start: `${timeString}`,
-      end: `${timeObject.date} ${hourString}:${minutesString}:00`,
-      title: "New Event",
-      color: "white",
-    };
-
-    if (timeObject.date) {
-      if (eventsByDate[timeObject.date]) {
-        eventsByDate[timeObject.date] = [
-          ...eventsByDate[timeObject.date],
-          newEvent,
-        ];
-        this.setState({ eventsByDate });
-      } else {
-        eventsByDate[timeObject.date] = [newEvent];
-        this.setState({ eventsByDate: { ...eventsByDate } });
-      }
-    }
-  };
-
-  approveNewEvent: TimelineProps["onBackgroundLongPressOut"] = (
-    _timeString,
-    timeObject,
-  ) => {
-    const { eventsByDate } = this.state;
-
-    Alert.prompt("New Event", "Enter event title", [
-      {
-        text: "Cancel",
-        onPress: () => {
-          if (timeObject.date) {
-            eventsByDate[timeObject.date] = filter(
-              eventsByDate[timeObject.date],
-              (e) => e.id !== "draft",
-            );
-
-            this.setState({
-              eventsByDate,
-            });
-          }
-        },
-      },
-      {
-        text: "Create",
-        onPress: (eventTitle: string | undefined) => {
-          if (timeObject.date) {
-            const draftEvent = find(eventsByDate[timeObject.date], {
-              id: "draft",
-            });
-            if (draftEvent) {
-              draftEvent.id = undefined;
-              draftEvent.title = eventTitle ?? "New Event";
-              draftEvent.color = "lightgreen";
-              eventsByDate[timeObject.date] = [
-                ...eventsByDate[timeObject.date],
-              ];
-
-              this.setState({
-                eventsByDate,
-              });
-            }
-          }
-        },
-      },
-    ]);
-  };
-
   private timelineProps: Partial<TimelineProps> = {
     format24h: true,
-    onBackgroundLongPress: this.createNewEvent,
-    onBackgroundLongPressOut: this.approveNewEvent,
     // scrollToFirst: true,
     // start: 0,
     // end: 24,
@@ -164,22 +86,43 @@ class TimelineCalendarScreen extends Component<Props, {}> {
         onMonthChange={this.onMonthChange}
         showTodayButton
         disabledOpacity={0.6}
-        // numberOfDays={3}
+        style={{ flex: 1 }}
       >
         <ExpandableCalendar
           firstDay={1}
           leftArrowImageSource={require("../assets/images/previous.png")}
           rightArrowImageSource={require("../assets/images/next.png")}
-          markedDates={this.marked}
+          markingType="period"
+          markedDates={{
+            ...this.marked,
+            ...{
+              [currentDate]: {
+                marked: false,
+                customContainerStyle: {
+                  backgroundColor: "#FF0000B3",
+                  width: 30,
+                  height: 30,
+                },
+              },
+            },
+          }}
+          theme={{
+            todayTextColor: "#0F55D7",
+            textSectionTitleColor: "#568F74",
+            textDayFontFamily: "Verdana",
+            textMonthFontFamily: "Verdana",
+            textMonthFontWeight: "bold",
+          }}
         />
-        <TimelineList
-          events={eventsByDate}
-          timelineProps={this.timelineProps}
-          showNowIndicator
-          // scrollToNow
-          scrollToFirst
-          initialTime={INITIAL_TIME}
-        />
+        <View style={styles.timeline}>
+          <TimelineList
+            events={eventsByDate}
+            timelineProps={this.timelineProps}
+            showNowIndicator
+            scrollToNow
+            initialTime={INITIAL_TIME}
+          />
+        </View>
       </CalendarProvider>
     );
   }
@@ -188,15 +131,14 @@ class TimelineCalendarScreen extends Component<Props, {}> {
 export default function Index() {
   const [data, setData] = useState<event[]>([]);
   const [broadcasts, setBroadcasts] = useState<any>([]);
+  const notifToken = useAppSelector(
+    (state) => state.userInfo?.["Notification Token"],
+  );
   useEffect(() => {
     const getGames = async () => {
       try {
         let response = null;
-        if (Platform.OS === "android") {
-          response = await fetch("http://10.0.2.2:3000/calendar");
-        } else {
-          response = await fetch("http://localhost:3000/calendar");
-        }
+        response = await fetch(`${link}/calendar`);
         console.log(response);
         let events = await response.json();
         console.log(events);
@@ -230,14 +172,31 @@ export default function Index() {
           }
         }
         setBroadcasts(broadcasts);
+        if (
+          notifToken !== null &&
+          (Platform.OS === "ios" || Platform.OS === "android")
+        ) {
+          sendPushNotification(notifToken!);
+        }
       } catch {
         console.log("Failed to fetch data");
         setBroadcasts([]);
       }
     };
     getBroadcasts();
-  }, []);
+  }, [notifToken]);
   console.log(data);
   console.log(broadcasts);
-  return <TimelineCalendarScreen newEvents={data} />;
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <TimelineCalendarScreen newEvents={data} />
+      </SafeAreaView>
+    </SafeAreaProvider>
+  );
 }
+const styles = EStyleSheet.create({
+  timeline: {
+    maxHeight: "36rem",
+  },
+});

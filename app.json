@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Gamepulse",
-    "slug": "Gamepulse",
+    "slug": "gamepulse",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -38,11 +38,28 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/josefin-sans/400Regular/JosefinSans_400Regular.ttf",
+            "node_modules/@expo-google-fonts/kantumruy-pro/300Light/KantumruyPro_300Light.ttf",
+            "node_modules/@expo-google-fonts/istok-web/400Regular/IstokWeb_400Regular.ttf"
+          ]
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b5636ef6-e63f-4f80-8753-3b691d32cd63"
+      }
+    },
+    "owner": "seniordesign2026"
   }
 }

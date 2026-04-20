@@ -1,9 +1,45 @@
-import { changeLoginStatus } from "@/features/stateSlice";
+import { setUserInfo } from "@/features/stateSlice";
+import { Dispatch, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
+import { PersistPartial } from "redux-persist/es/persistReducer";
+import { link } from "./_layout";
 import { useAppDispatch } from "./hooks";
+async function login(
+  username: string,
+  password: string,
+  dispatch: ThunkDispatch<
+    {
+      isLoggedIn: boolean;
+    } & PersistPartial,
+    undefined,
+    UnknownAction
+  > &
+    Dispatch<UnknownAction>,
+) {
+  console.log(username);
+  console.log(password);
+  let response = null;
+  const authHeader = "Basic " + btoa(`${username}:${password}`);
+  response = await fetch(`${link}/auth/login`, {
+    method: "POST",
+    headers: {
+      Authorization: authHeader,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      username,
+      password,
+    }),
+  });
+  if (response !== null && response.status === 201) {
+    let data = await response.json();
+    console.log(data);
+    dispatch(setUserInfo(data));
+  }
+}
 export default function Index() {
   const dispatch = useAppDispatch();
   const [username, changeUsername] = useState("");
@@ -14,7 +50,7 @@ export default function Index() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#00ced1"
+        backgroundColor: "#00ced1",
       }}
     >
       <Text style={styles.header}>Sign in to Gamepulse</Text>
@@ -32,9 +68,9 @@ export default function Index() {
       />
       <Pressable
         style={styles.button}
-        onPress={() => dispatch(changeLoginStatus())}
+        onPress={() => login(username, password, dispatch)}
       >
-        Submit
+        <Text>Submit</Text>
       </Pressable>
       <Link href={"/signup"}>No Account? Create One</Link>
     </View>
