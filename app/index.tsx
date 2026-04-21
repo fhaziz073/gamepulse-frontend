@@ -1,34 +1,51 @@
 import { setUserInfo } from "@/features/stateSlice";
 import { useRouter } from "expo-router";
-import { Button, Text, View } from "react-native";
+import { Button, View } from "react-native";
 import { useAppDispatch } from "./hooks";
 export default function Index() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+<View
+        style={{
+          flex: 1,
+          overflow: "hidden",
+          borderRadius: 3,
+          alignItems: "flex-end",
+          justifyContent: "space-around",
+          flexDirection: "row",
+          paddingBottom: 15,
+          backgroundColor: "#708090",
+        }}
+      >
+        <View style={{ flexDirection: "column" }}>
       <Button
-        title="Go to Calendar"
+        title="Calendar"
         onPress={() => router.navigate("/calendar")}
+        color={"#303234"}
       />
+        </View>
+        <View style={{ flexDirection: "column" }}>
       <Button
-        title="Go to Preferences"
+        title="Preferences"
         onPress={() => router.navigate("/preferences")}
+        color={"#303234"}
       />
-      <Button title="Go to Player" onPress={() => router.navigate("/player")} />
+        </View>
+        <View style={{ flexDirection: "column" }}>
+      <Button
+        title="Player"
+        onPress={() => router.navigate("/player")}
+        color={"#303234"}
+      />
+        </View>
+        <View style={{ flexDirection: "column" }}>
       <Button
         title="Log Out"
-        onPress={() => {
-          dispatch(setUserInfo(null));
-        }}
+        onPress={() => dispatch(setUserInfo(null))}
+        color={"#303234"}
       />
-    </View>
+        </View>
+      </View>
   );
 }

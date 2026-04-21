@@ -84,7 +84,7 @@ export default function Index() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#00ced1",
+        backgroundColor: "#708090",
       }}
     >
       <Text style={styles.header}>Welcome to Gamepulse!</Text>
@@ -150,15 +150,19 @@ export default function Index() {
 }
 const styles = EStyleSheet.create({
   container: {
+    borderWidth: 1,
+    borderColor: 'black',
     backgroundColor: "white",
     padding: "1rem",
     margin: "1rem",
   },
   button: {
-    backgroundColor: "#045c5a",
+    borderWidth: 1,
+    borderColor: 'black',
+    backgroundColor: "#FFFFFF",
     color: "white",
     padding: "1rem",
-    margin: "1rem",
+    margin: "3rem"
   },
   header: {
     fontSize: "2rem",
