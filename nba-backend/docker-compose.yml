@@ -1,0 +1,17 @@
+# Optional: Postgres only for this project (port 5432).
+# If you already use Postgres on 5432, either create DB manually (see README) or change the left port, e.g. "5433:5432".
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nba_app
+    volumes:
+      - nba_pgdata:/var/lib/postgresql/data
+
+volumes:
+  nba_pgdata:
