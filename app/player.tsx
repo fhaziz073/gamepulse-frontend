@@ -1,7 +1,35 @@
+import { NBAPlayer, NBASeasonAverages } from "@balldontlie/sdk";
 import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
+import { link } from "./_layout";
 export default function Player() {
+  const [player, setPlayer] = useState<NBAPlayer[]>([]);
+  const [playerSeasonAvgs, setPlayerSeasonAvgs] = useState<NBASeasonAverages[]>(
+    [],
+  );
+  useEffect(() => {
+    async function getPlayer() {
+      let response = null;
+      response = await fetch(`${link}/players?firstName=Nikola&lastName=Jokic`);
+      console.log(response);
+      let players = await response.json();
+      console.log(players);
+      setPlayer(players);
+      if (player.length !== 0) {
+        let seasonAvgsResponse = await fetch(
+          `${link}/players/${player[0].id}/seasonalStatAvgs`,
+        );
+        console.log(seasonAvgsResponse);
+        let seasonAvgs = await seasonAvgsResponse.json();
+        console.log(seasonAvgs);
+        setPlayerSeasonAvgs(seasonAvgs);
+        console.log(seasonAvgs);
+      }
+    }
+    getPlayer();
+  }, []);
   return (
     <ScrollView
       style={{ flex: 1, flexDirection: "column" }}
@@ -25,24 +53,36 @@ export default function Player() {
           <View
             style={{ flexDirection: "row", justifyContent: "space-around" }}
           >
-            <Text style={styles.playerInfo}>Denver Nuggets</Text>
-            <Text style={styles.playerInfo}>C</Text>
-            <Text style={styles.playerInfo}>#15</Text>
+            <Text style={styles.playerInfo}>
+              {player.length !== 0 ? player[0].team.full_name : ""}
+            </Text>
+            <Text style={styles.playerInfo}>
+              {player.length !== 0 ? player[0].position : ""}
+            </Text>
+            <Text style={styles.playerInfo}>
+              {player.length !== 0 ? player[0].jersey_number : ""}
+            </Text>
           </View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-around" }}
           >
             <View style={styles.playerMeasurableRow}>
               <Text style={styles.playerMeasurableHeaders}>HT</Text>
-              <Text style={styles.playerMeasurables}>6&apos;11&apos;</Text>
+              <Text style={styles.playerMeasurables}>
+                {player.length !== 0 ? player[0].height : ""}
+              </Text>
             </View>
             <View style={styles.playerMeasurableRow}>
-              <Text style={styles.playerMeasurableHeaders}>Age</Text>
-              <Text style={styles.playerMeasurables}>30</Text>
+              <Text style={styles.playerMeasurableHeaders}>Country</Text>
+              <Text style={styles.playerMeasurables}>
+                {player.length !== 0 ? player[0].country : ""}
+              </Text>
             </View>
             <View style={styles.playerMeasurableRow}>
               <Text style={styles.playerMeasurableHeaders}>Weight</Text>
-              <Text style={styles.playerMeasurables}>284</Text>
+              <Text style={styles.playerMeasurables}>
+                {player.length !== 0 ? player[0].weight : ""}
+              </Text>
             </View>
           </View>
         </View>
@@ -56,15 +96,27 @@ export default function Player() {
         <View style={{ flexDirection: "row" }}>
           <View style={{ flexDirection: "column" }}>
             <Text style={styles.seasonStat}>PTS</Text>
-            <Text style={styles.seasonStatVal}>29.6</Text>
+            <Text style={styles.seasonStatVal}>
+              {playerSeasonAvgs.length !== 0
+                ? playerSeasonAvgs[0].pts.toFixed(1)
+                : ""}
+            </Text>
           </View>
           <View style={{ flexDirection: "column" }}>
             <Text style={styles.seasonStat}>REB</Text>
-            <Text style={styles.seasonStatVal}>12.2</Text>
+            <Text style={styles.seasonStatVal}>
+              {playerSeasonAvgs.length !== 0
+                ? playerSeasonAvgs[0].reb.toFixed(1)
+                : ""}
+            </Text>
           </View>
           <View style={{ flexDirection: "column" }}>
             <Text style={styles.seasonStat}>AST</Text>
-            <Text style={styles.seasonStatVal}>11.0</Text>
+            <Text style={styles.seasonStatVal}>
+              {playerSeasonAvgs.length !== 0
+                ? playerSeasonAvgs[0].ast.toFixed(1)
+                : ""}
+            </Text>
           </View>
         </View>
       </View>
