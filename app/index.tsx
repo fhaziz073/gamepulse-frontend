@@ -39,54 +39,54 @@ export default function Index() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   return (
-<SafeAreaProvider>
-  <SafeAreaView style={{
-          flex: 1,
-          overflow: "hidden",
-          borderRadius: 3,
-          alignItems: "flex-end",
-          justifyContent: "space-around",
-          flexDirection: "row",
-          paddingTop: 250,
-          backgroundColor: "#708090",
-        }}
-      >
-    <App></App>
-  </SafeAreaView>
-<SafeAreaView
-        style={{
-          flex: 1,
-          overflow: "hidden",
-          borderRadius: 3,
-          alignItems: "flex-end",
-          justifyContent: "space-around",
-          flexDirection: "row",
-          paddingBottom: 10,
-          backgroundColor: "#708090"
-        }}
-      >
-      <Button
-        title="Calendar"
-        onPress={() => router.navigate("/calendar")}
-        color={"#303234"}
-      />
-      <Button
-        title="Preferences"
-        onPress={() => router.navigate("/preferences")}
-        color={"#303234"}
-      />
-      <Button
-        title="Player"
-        onPress={() => router.navigate("/player")}
-        color={"#303234"}
-      />
-      <Button
-        title="Log Out"
-        onPress={() => dispatch(setUserInfo(null))}
-        color={"#303234"}
-      />
-      </SafeAreaView>
-      </SafeAreaProvider>
+    <View
+      style={{
+        flex: 1,
+        overflow: "hidden",
+        borderRadius: 3,
+        alignItems: "flex-end",
+        justifyContent: "space-around",
+        flexDirection: "row",
+        paddingBottom: 15,
+        backgroundColor: "#708090",
+      }}
+    >
+      <View style={{ flexDirection: "column" }}>
+        <Button
+          title="Calendar"
+          onPress={() => router.navigate("/calendar")}
+          color={"#303234"}
+        />
+      </View>
+      <View style={{ flexDirection: "column" }}>
+        <Button
+          title="Preferences"
+          onPress={() => router.navigate("/preferences")}
+          color={"#303234"}
+        />
+      </View>
+      <View style={{ flexDirection: "column" }}>
+        <Button
+          title="Player"
+          onPress={() => router.navigate("/player")}
+          color={"#303234"}
+        />
+      </View>
+      <View style={{ flexDirection: "column" }}>
+        <Button
+          title="Visualization"
+          onPress={() => router.navigate("/visualization")}
+          color={"#303234"}
+        />
+      </View>
+      <View style={{ flexDirection: "column" }}>
+        <Button
+          title="Log Out"
+          onPress={() => dispatch(setUserInfo(null))}
+          color={"#303234"}
+        />
+      </View>
+    </View>
   );
 }
 
