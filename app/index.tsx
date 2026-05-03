@@ -1,4 +1,5 @@
 import { setUserInfo } from "@/features/stateSlice";
+import { font } from "@/theme";
 import { useRouter } from "expo-router";
 import React from 'react';
 import { Button, SectionList, StyleSheet, Text, View } from "react-native";
@@ -48,7 +49,7 @@ export default function Index() {
           justifyContent: "space-around",
           flexDirection: "row",
           paddingTop: 250,
-          backgroundColor: "#708090",
+          backgroundColor: "#0f172a",
         }}
       >
     <App></App>
@@ -62,7 +63,7 @@ export default function Index() {
           justifyContent: "space-around",
           flexDirection: "row",
           paddingBottom: 10,
-          backgroundColor: "#708090"
+          backgroundColor: "#0f172a"
         }}
       >
         <Button
@@ -81,7 +82,7 @@ export default function Index() {
           color={"#303234"}
         />
         <Button
-          title="Visualization"
+          title="Stat Analytics"
           onPress={() => router.navigate("/visualization")}
           color={"#303234"}
         />
@@ -103,15 +104,19 @@ const styles = StyleSheet.create({
     height: 400
   },
   item: {
-    backgroundColor: '#5f6266',
+    backgroundColor: '#0f252a',
     padding: 5,
     marginVertical: 5,
   },
   header: {
     fontSize: 25,
-    backgroundColor: '#708090',
+    backgroundColor: '#0f172a',
+    color: '#FFFFFF',
+    fontFamily: font.bold
   },
   title: {
     fontSize: 30,
+    color: "#FAF9F6",
+    fontFamily: font.regular
   }
 });

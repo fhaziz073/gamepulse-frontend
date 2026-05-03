@@ -1,4 +1,5 @@
 import { setUserInfo } from "@/features/stateSlice";
+import { font } from "@/theme";
 import { Dispatch, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { Checkbox } from "expo-checkbox";
 import { Link } from "expo-router";
@@ -16,6 +17,7 @@ import { PersistPartial } from "redux-persist/es/persistReducer";
 import { link } from "./_layout";
 import { useAppDispatch } from "./hooks";
 import { registerForPushNotificationsAsync } from "./push_notifications";
+
 async function signup(
   username: string,
   password: string,
@@ -84,7 +86,7 @@ export default function Index() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#708090",
+        backgroundColor: "#0f172a",
       }}
     >
       <Text style={styles.header}>Welcome to Gamepulse!</Text>
@@ -144,7 +146,7 @@ export default function Index() {
           <Text>Submit</Text>
         </Pressable>
       </ScrollView>
-      <Link href={"/login"}>Have an existing account? Login</Link>
+      <Link href={"/login"} style={styles.title}>Have an existing account? Login</Link>
     </View>
   );
 }
@@ -166,5 +168,12 @@ const styles = EStyleSheet.create({
   },
   header: {
     fontSize: "2rem",
+    color: "#FFFFFF",
+    fontFamily: font.bold
   },
+  title: {
+    fontSize: 15,
+    color: "#FAF9F6",
+    fontFamily: font.regular
+  }
 });
