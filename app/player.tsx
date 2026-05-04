@@ -4,11 +4,14 @@ import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { link } from "./_layout";
+import { event } from "./calendar";
 export default function Player() {
   const [player, setPlayer] = useState<NBAPlayer[]>([]);
   const [playerSeasonAvgs, setPlayerSeasonAvgs] = useState<NBASeasonAverages[]>(
     [],
   );
+  const [data, setData] = useState<event | null>(null);
+  const [injury, setInjury] = useState<any[]>([]);
   useEffect(() => {
     async function getPlayer() {
       let response = null;
@@ -17,6 +20,11 @@ export default function Player() {
       let players = await response.json();
       console.log(players);
       setPlayer(players);
+    }
+    getPlayer();
+  }, []);
+  useEffect(() => {
+    async function getPlayerSeasonAvgs() {
       if (player.length !== 0) {
         let seasonAvgsResponse = await fetch(
           `${link}/players/${player[0].id}/seasonalStatAvgs`,
@@ -28,8 +36,56 @@ export default function Player() {
         console.log(seasonAvgs);
       }
     }
-    getPlayer();
-  }, []);
+    getPlayerSeasonAvgs();
+  }, [player]);
+  useEffect(() => {
+    async function getNextGame() {
+      try {
+        let response = null;
+        response = await fetch(`${link}/calendar/6`);
+        console.log(response);
+        let events = await response.json();
+        console.log(events);
+        setData(events[0]);
+      } catch {
+        console.log("Failed to fetch data");
+        setData(null);
+      }
+    }
+    getNextGame();
+  }, [player]);
+  useEffect(() => {
+    async function getNextGame() {
+      try {
+        let response = null;
+        response = await fetch(`${link}/calendar/6`);
+        console.log(response);
+        let events = await response.json();
+        console.log(events);
+        setData(events[0]);
+      } catch {
+        console.log("Failed to fetch data");
+        setData(null);
+      }
+    }
+    getNextGame();
+  }, [player]);
+  useEffect(() => {
+    async function getPlayerInjury() {
+      try {
+        let response = null;
+        response = await fetch(`${link}/players/${player[0].id}/injury`);
+        console.log(response);
+        let injury = await response.json();
+        console.log(injury);
+        setInjury(injury);
+      } catch {
+        console.log("Failed to fetch data");
+        setData(null);
+      }
+    }
+    getPlayerInjury();
+  }, [player]);
   return (
     <ScrollView
       style={{ flex: 1, flexDirection: "column" }}
@@ -40,14 +96,17 @@ export default function Player() {
         colors={["rgba(0,0,255,1)", "rgba(255, 236, 0, 1)"]}
         style={{ height: "100%", width: "100%", position: "absolute" }}
       />
-      <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
         <Image
           style={styles.playerImage}
           resizeMode="contain"
           source={require("../assets/images/jokic.jpg")}
         />
         <View
-          style={{ flexDirection: "column", justifyContent: "space-evenly" }}
+          style={{
+            flexDirection: "column",
+            justifyContent: "space-evenly",
+          }}
         >
           <Text style={styles.playerName}>Nikola Jokic</Text>
           <View
@@ -87,13 +146,17 @@ export default function Player() {
           </View>
         </View>
       </View>
-      <View style={styles.injuryBar}>
-        <Text style={styles.injuryText}>INJURY STATUS</Text>
-        <Text style={styles.injuryText}>OUT (KNEE)</Text>
-      </View>
+      {injury.length !== 0 ? (
+        <View style={styles.injuryBar}>
+          <Text style={styles.injuryText}>INJURY STATUS</Text>
+          <Text style={styles.injuryText}>OUT (KNEE)</Text>
+        </View>
+      ) : (
+        <View></View>
+      )}
       <View style={styles.container}>
         <Text style={styles.seasonAvg}>2025-2026 Season Average</Text>
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", gap: 20 }}>
           <View style={{ flexDirection: "column" }}>
             <Text style={styles.seasonStat}>PTS</Text>
             <Text style={styles.seasonStatVal}>
@@ -120,22 +183,30 @@ export default function Player() {
           </View>
         </View>
       </View>
-      <View style={styles.container}>
-        <Text style={styles.nextGameHeader}>Next Game</Text>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Image
-            style={styles.teamLogo}
-            resizeMode="contain"
-            source={require("../assets/images/team_logos/Chicago Bulls.png")}
-          />
-          <Text style={styles.vs}>vs.</Text>
-          <Image
-            style={styles.teamLogo}
-            source={require("../assets/images/team_logos/Denver Nuggets.png")}
-          />
+      {data ? (
+        <View style={styles.container}>
+          <Text style={styles.nextGameHeader}>Next Game</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+            <Image
+              style={styles.teamLogo}
+              resizeMode="contain"
+              source={require("../assets/images/team_logos/Chicago Bulls.png")}
+            />
+            <Text style={styles.vs}>vs.</Text>
+            <Image
+              style={styles.teamLogo}
+              source={require("../assets/images/team_logos/Denver Nuggets.png")}
+            />
+          </View>
+          <Text style={styles.nextGameTime}>
+            {new Date(data.start).toDateString() +
+              " " +
+              new Date(data.start).toLocaleTimeString()}
+          </Text>
         </View>
-        <Text style={styles.nextGameTime}>Sat, Jan 17th 9:30 P.M.</Text>
-      </View>
+      ) : (
+        <View></View>
+      )}
       <View style={styles.statsContainer}>
         <View style={{ flexDirection: "column" }}>
           <Text style={styles.statsText}>Date</Text>
@@ -221,8 +292,7 @@ const styles = EStyleSheet.create({
     fontSize: "1.5rem",
   },
   playerImage: {
-    height: "13rem",
-    width: "13rem",
+    maxWidth: "50%",
   },
   playerMeasurableRow: { flexDirection: "column", alignItems: "center" },
   seasonAvg: {
@@ -232,24 +302,29 @@ const styles = EStyleSheet.create({
   },
   seasonStat: {
     fontFamily: "JosefinSans_400Regular",
+    fontSize: "1.5rem",
   },
   seasonStatVal: {
     fontFamily: "IstokWeb_400Regular",
+    fontSize: "1.5rem",
   },
   nextGameTime: {
     fontFamily: "IstokWeb_400Regular",
+    fontSize: "1.5rem",
   },
   vs: {
     fontFamily: "IstokWeb_400Regular",
+    fontSize: "1rem",
   },
   nextGameHeader: {
     textDecorationLine: "underline",
     fontFamily: "JosefinSans_400Regular",
+    fontSize: "1.5rem",
   },
   injuryBar: {
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "red",
   },
-  teamLogo: { height: "4rem", maxWidth: "4rem" },
+  teamLogo: { height: "5rem", maxWidth: "5rem" },
 });

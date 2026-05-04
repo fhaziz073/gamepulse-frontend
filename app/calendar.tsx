@@ -15,7 +15,7 @@ import { link } from "./_layout";
 import { useAppSelector } from "./hooks";
 import { sendPushNotification } from "./push_notifications";
 
-type event = {
+export type event = {
   start: string;
   end: string;
   title: string;
@@ -138,7 +138,7 @@ export default function Index() {
     const getGames = async () => {
       try {
         let response = null;
-        response = await fetch(`${link}/calendar`);
+        response = await fetch(`${link}/calendar/6`);
         console.log(response);
         let events = await response.json();
         console.log(events);
