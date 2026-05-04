@@ -38,7 +38,13 @@ function handleRegistrationError(errorMessage: string) {
 }
 
 export async function registerForPushNotificationsAsync() {
-  if (Platform.OS === "web") {
+  const isStorageAvailable =
+    typeof window !== "undefined" && window.localStorage;
+
+  if (Platform.OS === "web" && !isStorageAvailable) {
+    console.warn(
+      "Storage is unavailable. Push notifications may not work in this browser.",
+    );
     return;
   }
   if (Platform.OS === "android") {
