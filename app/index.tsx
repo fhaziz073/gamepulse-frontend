@@ -1,34 +1,38 @@
 import { setUserInfo } from "@/features/stateSlice";
 import { font } from "@/theme";
 import { useRouter } from "expo-router";
-import React from 'react';
+import React from "react";
 import { Button, SectionList, StyleSheet, Text, View } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useAppDispatch } from "./hooks";
 
 const DATA = [
-{
-  title: 'Your Teams',
-  data: ['NYK 95   3rd 5:42   72 GSW', 'CHI 17   1st 13:50   15 MIN', 'SAS   10:30 PM   LAL'] 
-},
-{
-  title: "Today's Games",
-  data: ['DEN 95   3rd 5:42   72 IDK', 'CHI 17   1st 13:50   15 MIN']
-}
-]
+  {
+    title: "Your Teams",
+    data: [
+      "NYK 95   3rd 5:42   72 GSW",
+      "CHI 17   1st 13:50   15 MIN",
+      "SAS   10:30 PM   LAL",
+    ],
+  },
+  {
+    title: "Today's Games",
+    data: ["DEN 95   3rd 5:42   72 IDK", "CHI 17   1st 13:50   15 MIN"],
+  },
+];
 
 const App = () => (
   <SafeAreaProvider>
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <SectionList
         sections={DATA}
         keyExtractor={(item, index) => item + index}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <View style={styles.item}>
             <Text style={styles.title}>{item}</Text>
           </View>
         )}
-        renderSectionHeader={({section: {title}}) => (
+        renderSectionHeader={({ section: { title } }) => (
           <Text style={styles.header}>{title}</Text>
         )}
       />
@@ -40,8 +44,9 @@ export default function Index() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   return (
-<SafeAreaProvider>
-  <SafeAreaView style={{
+    <SafeAreaProvider>
+      <SafeAreaView
+        style={{
           flex: 1,
           overflow: "hidden",
           borderRadius: 3,
@@ -52,9 +57,9 @@ export default function Index() {
           backgroundColor: "#0f172a",
         }}
       >
-    <App></App>
-  </SafeAreaView>
-<SafeAreaView
+        <App></App>
+      </SafeAreaView>
+      <SafeAreaView
         style={{
           flex: 1,
           overflow: "hidden",
@@ -63,7 +68,7 @@ export default function Index() {
           justifyContent: "space-around",
           flexDirection: "row",
           paddingBottom: 10,
-          backgroundColor: "#0f172a"
+          backgroundColor: "#0f172a",
         }}
       >
         <Button
@@ -87,36 +92,46 @@ export default function Index() {
           color={"#303234"}
         />
         <Button
+          title="Game"
+          onPress={() => router.navigate("/game")}
+          color={"#303234"}
+        />
+        <Button
+          title="Team"
+          onPress={() => router.navigate("/team")}
+          color={"#303234"}
+        />
+        <Button
           title="Log Out"
           onPress={() => dispatch(setUserInfo(null))}
           color={"#303234"}
         />
       </SafeAreaView>
-      </SafeAreaProvider>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    height: 400
+    alignItems: "center",
+    justifyContent: "flex-start",
+    height: 400,
   },
   item: {
-    backgroundColor: '#0f252a',
+    backgroundColor: "#0f252a",
     padding: 5,
     marginVertical: 5,
   },
   header: {
     fontSize: 25,
-    backgroundColor: '#0f172a',
-    color: '#FFFFFF',
-    fontFamily: font.bold
+    backgroundColor: "#0f172a",
+    color: "#FFFFFF",
+    fontFamily: font.bold,
   },
   title: {
     fontSize: 30,
     color: "#FAF9F6",
-    fontFamily: font.regular
-  }
+    fontFamily: font.regular,
+  },
 });

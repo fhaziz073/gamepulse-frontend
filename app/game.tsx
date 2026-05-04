@@ -1,12 +1,6 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
-import {
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
-} from 'react-native';
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function GameScreen() {
   const router = useRouter();
@@ -14,33 +8,40 @@ export default function GameScreen() {
 
   // 🔹 Placeholder data (replace later with API call using gameId)
   const game = {
-    team1: { id: 1, name: 'Knicks', logo: 'assets/images/team_logos/New York Knicks.png' },
-    team2: { id: 2, name: 'Bulls', logo: 'assets/images/team_logos/Chicago Bulls.png' },
+    team1: {
+      id: 1,
+      name: "Knicks",
+      logo: "../assets/images/team_logos/New York Knicks.png",
+    },
+    team2: {
+      id: 2,
+      name: "Bulls",
+      logo: "../assets/images/team_logos/Chicago Bulls.png",
+    },
     score1: 113,
     score2: 79,
-    quarter: '4th',
-    time: '5:42'
+    quarter: "4th",
+    time: "5:42",
   };
 
   const topPlayers = [
-    { name: 'J. Brunson', pts: 27.2 },
-    { name: 'K. Towns', pts: 19.8 }
+    { name: "J. Brunson", pts: 27.2 },
+    { name: "K. Towns", pts: 19.8 },
   ];
 
   const stats = [
-    { name: 'J. Brunson', pts: 22, ast: 22, reb: 22 },
-    { name: 'K. Towns', pts: 19, ast: 19, reb: 19 },
-    { name: 'O. Anunoby', pts: 14, ast: 14, reb: 14 },
-    { name: 'M. Bridges', pts: 12, ast: 12, reb: 12 },
-    { name: 'M. McBride', pts: 13, ast: 13, reb: 13 },
-    { name: 'J. Hart', pts: 7, ast: 7, reb: 7 },
-    { name: 'J. Clarkson', pts: 8, ast: 8, reb: 8 },
-    { name: 'L. Shamet', pts: 3, ast: 3, reb: 3 }
+    { name: "J. Brunson", pts: 22, ast: 22, reb: 22 },
+    { name: "K. Towns", pts: 19, ast: 19, reb: 19 },
+    { name: "O. Anunoby", pts: 14, ast: 14, reb: 14 },
+    { name: "M. Bridges", pts: 12, ast: 12, reb: 12 },
+    { name: "M. McBride", pts: 13, ast: 13, reb: 13 },
+    { name: "J. Hart", pts: 7, ast: 7, reb: 7 },
+    { name: "J. Clarkson", pts: 8, ast: 8, reb: 8 },
+    { name: "L. Shamet", pts: 3, ast: 3, reb: 3 },
   ];
 
   return (
     <View style={styles.container}>
-
       {/* 🔙 Back Button */}
       <TouchableOpacity onPress={() => router.back()}>
         <Text style={styles.back}>← Back</Text>
@@ -53,11 +54,15 @@ export default function GameScreen() {
 
       {/* 🟠 Score Section */}
       <View style={styles.scoreRow}>
-
         {/* Team 1 */}
         <TouchableOpacity
           style={styles.team}
-          onPress={() => router.push({pathname: '/team',params: { teamId: game.team1.id }})}
+          onPress={() =>
+            router.push({
+              pathname: "/team",
+              params: { teamId: game.team1.id },
+            })
+          }
         >
           <Image source={{ uri: game.team1.logo }} style={styles.logo} />
           <Text style={styles.score}>{game.score1}</Text>
@@ -73,12 +78,16 @@ export default function GameScreen() {
         {/* Team 2 */}
         <TouchableOpacity
           style={styles.team}
-          onPress={() => router.push({pathname: '/team',params: { teamId: game.team1.id }})}
+          onPress={() =>
+            router.push({
+              pathname: "/team",
+              params: { teamId: game.team1.id },
+            })
+          }
         >
           <Image source={{ uri: game.team2.logo }} style={styles.logo} />
           <Text style={styles.score}>{game.score2}</Text>
         </TouchableOpacity>
-
       </View>
 
       {/* ⭐ Top Players */}
@@ -111,7 +120,6 @@ export default function GameScreen() {
           </View>
         ))}
       </View>
-
     </View>
   );
 }
@@ -120,74 +128,74 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: 'orange'
+    backgroundColor: "orange",
   },
   back: {
     fontSize: 16,
-    marginBottom: 10
+    marginBottom: 10,
   },
   title: {
     fontSize: 28,
-    textAlign: 'center',
-    marginBottom: 16
+    textAlign: "center",
+    marginBottom: 16,
   },
   scoreRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 20
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 20,
   },
   team: {
-    alignItems: 'center'
+    alignItems: "center",
   },
   logo: {
     width: 80,
     height: 80,
-    marginBottom: 10
+    marginBottom: 10,
   },
   score: {
-    fontSize: 40
+    fontSize: 40,
   },
   gameInfo: {
-    alignItems: 'center'
+    alignItems: "center",
   },
   gameText: {
-    fontSize: 16
+    fontSize: 16,
   },
   section: {
     fontSize: 20,
-    marginVertical: 10
+    marginVertical: 10,
   },
   topPlayers: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   playerCard: {
-    backgroundColor: '#eee',
+    backgroundColor: "#eee",
     padding: 12,
     borderRadius: 10,
-    width: '48%'
+    width: "48%",
   },
   playerName: {
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   table: {
-    backgroundColor: '#eee',
+    backgroundColor: "#eee",
     padding: 12,
     borderRadius: 10,
-    marginTop: 20
+    marginTop: 20,
   },
   rowHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
   },
   name: {
-    width: 120
-  }
+    width: 120,
+  },
 });

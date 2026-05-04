@@ -8,6 +8,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { useAppSelector } from "./hooks";
 import { store } from "./store";
@@ -31,9 +32,11 @@ export default function RootLayout() {
     return null;
   }
   return (
-    <Provider store={store}>
-      <StackLayout />
-    </Provider>
+    <GestureHandlerRootView>
+      <Provider store={store}>
+        <StackLayout />
+      </Provider>
+    </GestureHandlerRootView>
   );
 }
 function StackLayout() {
