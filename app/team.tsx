@@ -1,54 +1,54 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    FlatList,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 export default function TeamScreen() {
-  const navigation = useNavigation();
-  const route = useRoute();
+  const router = useRouter();
+  const { teamId } = useLocalSearchParams();
 
-  const { teamId } = route.params as { teamId: string };
-
+  // 🔹 Placeholder data (replace with API later)
   const [players, setPlayers] = useState<any[]>([]);
   const [nextGame, setNextGame] = useState<any>(null);
 
-  // 🔹 Fetch team data
   useEffect(() => {
-    fetchTeamData();
+    loadPlaceholderData();
   }, []);
 
-  const fetchTeamData = async () => {
-    try {
-      //Need to put in database calls
-      // const playersRes = await ;
-      //const playersData = await playersRes.json();
+  const loadPlaceholderData = () => {
+    //Placeholders
+    const playersPlaceholder = [
+      { id: 1, name: 'J. Brunson', position: 'PG', points: 27.2 },
+      { id: 2, name: 'K. Towns', position: 'C', points: 19.8 },
+      { id: 3, name: 'O. Anunoby', position: 'SF', points: 14.3 },
+      { id: 4, name: 'M. Bridges', position: 'SG', points: 12.1 }
+    ];
 
-      //const gamesRes = await fetch();
-      //const gamesData = await gamesRes.json();
+    // Fake next game
+    const gamePlaceholder = {
+      id: 101,
+      opponent: 'Chicago Bulls',
+      date: '2026-05-10T19:30:00'
+    };
 
-      // Get next upcoming game
-      //const upcomingGame = gamesData
-      //  .filter((g: any) => new Date(g.date) > new Date())
-      //    .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
-
-      //setPlayers(playersData);
-      //setNextGame(upcomingGame);
-
-    } catch (err) {
-      console.error(err);
-    }
+    setPlayers(playersPlaceholder);
+    setNextGame(gamePlaceholder);
   };
 
+  // 👤 Player row
   const renderPlayer = ({ item }: any) => (
     <TouchableOpacity
       style={styles.playerRow}
       onPress={() =>
-        navigation.navigate('Player', { playerId: item.id })
+        router.push({
+          pathname: '/player',
+          params: { playerId: item.id }
+        })
       }
     >
       <Text style={styles.playerName}>{item.name}</Text>
@@ -59,15 +59,24 @@ export default function TeamScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+
+      {/* 🔙 Back Button */}
+      <TouchableOpacity onPress={() => router.back()}>
         <Text style={styles.backButton}>← Back</Text>
       </TouchableOpacity>
-      <Text style={styles.teamName}>New York Knicks</Text>
+
+      {/* 🏀 Team Header */}
+      <Text style={styles.teamName}>Team {teamId}</Text>
+
+      {/* 📅 Next Game */}
       {nextGame && (
         <TouchableOpacity
           style={styles.gameCard}
           onPress={() =>
-            navigation.navigate('Game', { gameId: nextGame.id })
+            router.push({
+              pathname: '/game',
+              params: { gameId: nextGame.id }
+            })
           }
         >
           <Text style={styles.sectionTitle}>Next Game</Text>
@@ -75,12 +84,16 @@ export default function TeamScreen() {
           <Text>{new Date(nextGame.date).toLocaleString()}</Text>
         </TouchableOpacity>
       )}
+
+      {/* 👥 Player List */}
       <Text style={styles.sectionTitle}>Roster</Text>
+
       <FlatList
         data={players}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderPlayer}
       />
+
     </View>
   );
 }
