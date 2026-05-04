@@ -38,6 +38,9 @@ function handleRegistrationError(errorMessage: string) {
 }
 
 export async function registerForPushNotificationsAsync() {
+  if (Platform.OS === "web") {
+    return;
+  }
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
       name: "default",
