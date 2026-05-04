@@ -1,11 +1,10 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
 import {
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 export default function GameScreen() {
@@ -73,7 +72,7 @@ export default function GameScreen() {
         {/* Team 2 */}
         <TouchableOpacity
           style={styles.team}
-          onPress={() => router.push({pathname: '/team',params: { teamId: game.team1.id }})}
+          onPress={() => router.push({pathname: '/team',params: { teamId: game.team2.id }})}
         >
           <Image source={{ uri: game.team2.logo }} style={styles.logo} />
           <Text style={styles.score}>{game.score2}</Text>
