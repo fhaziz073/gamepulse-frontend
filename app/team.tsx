@@ -28,7 +28,7 @@ export default function TeamScreen() {
       { id: 3, name: 'O. Anunoby', position: 'SF', points: 14.3 },
       { id: 4, name: 'M. Bridges', position: 'SG', points: 12.1 }
     ];
-
+ 
     // Fake next game
     const gamePlaceholder = {
       id: 101,
