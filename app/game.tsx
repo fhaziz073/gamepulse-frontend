@@ -1,4 +1,4 @@
-import { NBAGame } from "@balldontlie/sdk";
+import { NBAGame, NBAPlayer, NBAStats } from "@balldontlie/sdk";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -11,6 +11,7 @@ export default function GameScreen() {
   const router = useRouter();
   const { gameId } = useLocalSearchParams();
   const [game, setGame] = useState<NBAGame | null>(null);
+  const [stats, setStats] = useState<NBAStats[]>([]);
   useEffect(() => {
     async function getGame() {
       const gameResult: NBAGame = await (
@@ -21,6 +22,29 @@ export default function GameScreen() {
     }
     getGame();
   }, [gameId]);
+  useEffect(() => {
+    async function getGame() {
+      if (game) {
+        const players: NBAPlayer[] = await (
+          await fetch(`${link}/teams/?ids=${gameId}`)
+        ).json();
+        console.log(players);
+        const stats: NBAStats[] = [];
+        for (let player of players) {
+          const result = await fetch(
+            `${link}/players/${player.id}/stats/${game?.id}`,
+          );
+          const text = await result.text();
+          if (text) {
+            stats.push(await result.json());
+          }
+        }
+        console.log(stats);
+        setStats(stats);
+      }
+    }
+    getGame();
+  }, [gameId, game]);
   return (
     <SafeAreaView style={styles.container}>
       {/* 🔙 Back Button */}
@@ -55,8 +79,11 @@ export default function GameScreen() {
         {/* Game Info */}
         <View style={styles.gameInfo}>
           <Text style={styles.gameText}>
-            {game?.status} {game?.time}
+            {new Date(game?.status).toLocaleDateString() +
+              " " +
+              new Date(game?.status).toLocaleTimeString()}
           </Text>
+          <Text style={styles.gameText}>{game?.time}</Text>
         </View>
 
         {/* Team 2 */}
@@ -78,68 +105,92 @@ export default function GameScreen() {
       </View>
 
       {/* ⭐ Top Players */}
-      <Text style={styles.section}>Top Players</Text>
-      {/* <View style={styles.topPlayers}>
-        {topPlayers.map((p, i) => (
-          <TouchableOpacity
-            key={i}
-            style={styles.playerCard}
-            onPress={() =>
-              router.push({
-                pathname: "/player",
-                params: { playerId: i },
-              })
-            }
-          >
-            <Text style={styles.playerName}>{p.name}</Text>
-            <Text>{p.pts} Pts.</Text>
-          </TouchableOpacity>
-        ))}
-      </View> */}
-
-      {/* 📊 Stats Table */}
-      <View style={styles.table}>
-        <View style={styles.rowHeader}>
-          <View style={[styles.cell, styles.nameCol]}>
-            <Text style={styles.nameText}>Name</Text>
-          </View>
-          <View style={styles.cell}>
-            <Text style={styles.centerText}>Pts.</Text>
-          </View>
-          <View style={styles.cell}>
-            <Text style={styles.centerText}>Ast.</Text>
-          </View>
-          <View style={styles.cell}>
-            <Text style={styles.centerText}>Reb.</Text>
+      {stats.length > 0 ? (
+        <View>
+          <Text style={styles.section}>Top Players</Text>
+          <View style={styles.topPlayers}>
+            {stats ? (
+              stats.map((p, i) => (
+                <TouchableOpacity
+                  key={i}
+                  style={styles.playerCard}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/player",
+                      params: { playerId: i },
+                    })
+                  }
+                >
+                  <Text style={styles.playerName}>
+                    {p.player.first_name + p.player.last_name}
+                  </Text>
+                  <Text>{p.pts} Pts.</Text>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <></>
+            )}
           </View>
         </View>
+      ) : (
+        <></>
+      )}
 
-        {/* {stats.map((p, i) => (
-          <View key={i} style={styles.row}>
-            <TouchableOpacity
-              style={[styles.cell, styles.nameCol]}
-              onPress={() =>
-                router.push({
-                  pathname: "/player",
-                  params: { playerId: i },
-                })
-              }
-            >
-              <Text style={styles.nameText}>{p.name}</Text>
-            </TouchableOpacity>
+      {/* 📊 Stats Table */}
+      {stats.length > 0 ? (
+        <View>
+          <View style={styles.table}>
+            <View style={styles.rowHeader}>
+              <View style={[styles.cell, styles.nameCol]}>
+                <Text style={styles.nameText}>Name</Text>
+              </View>
+              <View style={styles.cell}>
+                <Text style={styles.centerText}>Pts.</Text>
+              </View>
+              <View style={styles.cell}>
+                <Text style={styles.centerText}>Ast.</Text>
+              </View>
+              <View style={styles.cell}>
+                <Text style={styles.centerText}>Reb.</Text>
+              </View>
+            </View>
 
-            <View style={styles.cell}>
-              <Text style={styles.centerText}>{p.pts}</Text>
-            </View>
-            <View style={styles.cell}>
-              <Text style={styles.centerText}>{p.ast}</Text>
-            </View>
-            <View style={styles.cell}>
-              <Text style={styles.centerText}>{p.reb}</Text>
-            </View>
+            {stats ? (
+              stats.map((p, i) => (
+                <View key={i} style={styles.row}>
+                  <TouchableOpacity
+                    style={[styles.cell, styles.nameCol]}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/player",
+                        params: { playerId: i },
+                      })
+                    }
+                  >
+                    <Text style={styles.nameText}>
+                      {p.player.first_name + " " + p.player.last_name}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <View style={styles.cell}>
+                    <Text style={styles.centerText}>{p.pts}</Text>
+                  </View>
+                  <View style={styles.cell}>
+                    <Text style={styles.centerText}>{p.ast}</Text>
+                  </View>
+                  <View style={styles.cell}>
+                    <Text style={styles.centerText}>{p.reb}</Text>
+                  </View>
+                </View>
+              ))
+            ) : (
+              <></>
+            )}
           </View>
-        ))} */}
-      </View>
+        </View>
+      ) : (
+        <></>
+      )}
     </SafeAreaView>
   );
 }
@@ -178,6 +229,7 @@ const styles = StyleSheet.create({
   },
   gameInfo: {
     alignItems: "center",
+    flexDirection: "column",
   },
   gameText: {
     fontSize: 16,
