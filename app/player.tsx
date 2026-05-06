@@ -47,12 +47,11 @@ export default function Player() {
   }, [player]);
   useEffect(() => {
     async function getNextGame() {
-      try {
+      if (player) {
         let response = null;
-        response = await fetch(`${link}/calendar/${player?.id}`);
-        console.log(response);
+        response = await fetch(`${link}/calendar/${player.team.id}`);
         let events = await response.json();
-        console.log(events);
+        console.log(response);
         for (let event of events) {
           const toLocal = (utcStr: string): string => {
             const date = new Date(utcStr.replace(" ", "T") + "Z");
@@ -64,10 +63,9 @@ export default function Player() {
           event.start = toLocal(event.start);
           event.end = toLocal(event.end);
         }
+        console.log(events);
+        console.log(events[0]);
         setData(events[0]);
-      } catch {
-        console.log("Failed to fetch data");
-        setData(null);
       }
     }
     getNextGame();
@@ -240,7 +238,9 @@ const input = (
         <Image
           style={styles.playerImage}
           resizeMode="contain"
-          source={require("../assets/images/jokic.jpg")}
+          source={{
+            uri: `${link}/players/image?firstName=${player.first_name}&lastName=${player.last_name}`,
+          }}
         />
         <View
           style={{
@@ -332,12 +332,26 @@ const input = (
             <Image
               style={styles.teamLogo}
               resizeMode="contain"
-              source={require(`../assets/images/team_logos/Chicago Bulls.png`)}
+              source={
+                ALL_NBA_TEAMS[
+                  ALL_NBA_TEAMS.findIndex(
+                    (team) =>
+                      team.name.split(" ").at(-1) === data.title.split(" ")[0],
+                  )
+                ].logo
+              }
             />
             <Text style={styles.vs}>vs.</Text>
             <Image
               style={styles.teamLogo}
-              source={require("../assets/images/team_logos/Denver Nuggets.png")}
+              source={
+                ALL_NBA_TEAMS[
+                  ALL_NBA_TEAMS.findIndex(
+                    (team) =>
+                      team.name.split(" ").at(-1) === data.title.split(" ")[2],
+                  )
+                ].logo
+              }
             />
           </View>
           <Text style={styles.nextGameTime}>
@@ -398,7 +412,8 @@ const styles = EStyleSheet.create({
     fontSize: "1.5rem",
   },
   playerImage: {
-    maxWidth: "50%",
+    width: "10.5rem",
+    height: "10.5rem",
   },
   playerMeasurableRow: { flexDirection: "column", alignItems: "center" },
   seasonAvg: {
