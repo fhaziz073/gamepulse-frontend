@@ -3,61 +3,91 @@ import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { link } from "./_layout";
 import { ALL_NBA_TEAMS } from "./teams";
 
 export default function GameScreen() {
   const router = useRouter();
-  const { gameId } = useLocalSearchParams();
+  const { gameId, teamId } = useLocalSearchParams();
+  console.log(gameId);
+  console.log(teamId);
   const [game, setGame] = useState<NBAGame | null>(null);
   const [stats, setStats] = useState<NBAStats[]>([]);
+  const [topPlayers, setTopPlayers] = useState<NBAStats[]>([]);
   useEffect(() => {
     async function getGame() {
-      const gameResult: NBAGame = await (
-        await fetch(`${link}/calendar/${gameId}/next`)
-      ).json();
-      console.log(gameResult);
-      setGame(gameResult);
-    }
-    getGame();
-  }, [gameId]);
-  useEffect(() => {
-    async function getGame() {
-      if (game) {
-        const players: NBAPlayer[] = await (
-          await fetch(`${link}/teams/?ids=${gameId}`)
+      if (teamId) {
+        const gameResult: NBAGame = await (
+          await fetch(`${link}/calendar/${teamId}/next`)
         ).json();
-        console.log(players);
-        const stats: NBAStats[] = [];
-        for (let player of players) {
-          const result = await fetch(
-            `${link}/players/${player.id}/stats/${game?.id}`,
-          );
-          const text = await result.text();
-          if (text) {
-            stats.push(await result.json());
-          }
-        }
-        console.log(stats);
-        setStats(stats);
+        console.log(gameResult);
+        setGame(gameResult);
+      } else if (gameId) {
+        const gameResult: NBAGame = await (
+          await fetch(`${link}/games/${gameId}`)
+        ).json();
+        console.log(gameResult);
+        setGame(gameResult);
       }
     }
     getGame();
-  }, [gameId, game]);
+  }, [gameId, teamId]);
+  useEffect(() => {
+    async function getGame() {
+      if (game) {
+        const [homePlayers, visitorPlayers]: [NBAPlayer[], NBAPlayer[]] =
+          await Promise.all([
+            fetch(`${link}/teams/?ids=${game!.home_team.id}`).then((r) =>
+              r.json(),
+            ),
+            fetch(`${link}/teams/?ids=${game!.visitor_team.id}`).then((r) =>
+              r.json(),
+            ),
+          ]);
+        const players = homePlayers.concat(visitorPlayers);
+        const results = await Promise.all(
+          players.map(async (player) => {
+            const text = await fetch(
+              `${link}/players/${player.id}/stats/${game!.id}`,
+            ).then((r) => r.text());
+
+            if (!text) return null;
+            try {
+              return JSON.parse(text) as NBAStats;
+            } catch {
+              console.warn(`Invalid JSON for player ${player.id}`);
+              return null;
+            }
+          }),
+        );
+        const validStats = results.filter((s): s is NBAStats => s !== null);
+        const top: NBAStats[] = [];
+        for (const stat of validStats) {
+          if (top.length < 2) {
+            top.push(stat);
+          } else if (stat.pts > top[0].pts) {
+            top[0] = stat;
+          } else if (stat.pts > top[1].pts) {
+            top[1] = stat;
+          }
+        }
+
+        setStats(validStats);
+        setTopPlayers([...top]);
+      }
+    }
+    getGame();
+  }, [game]);
   return (
     <SafeAreaView style={styles.container}>
-      {/* 🔙 Back Button */}
       <TouchableOpacity onPress={() => router.back()}>
         <Text style={styles.back}>← Back</Text>
       </TouchableOpacity>
-
-      {/* 🏀 Game Title */}
       <Text style={styles.title}>
         {game?.visitor_team.name} @ {game?.home_team.name}
       </Text>
-
-      {/* 🟠 Score Section */}
       <View style={styles.scoreRow}>
         {/* Team 1 */}
         <TouchableOpacity
@@ -79,9 +109,11 @@ export default function GameScreen() {
         {/* Game Info */}
         <View style={styles.gameInfo}>
           <Text style={styles.gameText}>
-            {new Date(game?.status).toLocaleDateString() +
-              " " +
-              new Date(game?.status).toLocaleTimeString()}
+            {!isNaN(new Date(game?.status).getTime())
+              ? new Date(game?.status).toLocaleDateString() +
+                " " +
+                new Date(game?.status).toLocaleTimeString()
+              : ""}
           </Text>
           <Text style={styles.gameText}>{game?.time}</Text>
         </View>
@@ -103,26 +135,24 @@ export default function GameScreen() {
           <Text style={styles.score}>{game?.home_team_score}</Text>
         </TouchableOpacity>
       </View>
-
-      {/* ⭐ Top Players */}
-      {stats.length > 0 ? (
+      {topPlayers.length > 0 ? (
         <View>
           <Text style={styles.section}>Top Players</Text>
           <View style={styles.topPlayers}>
-            {stats ? (
-              stats.map((p, i) => (
+            {topPlayers ? (
+              topPlayers.map((p, i) => (
                 <TouchableOpacity
                   key={i}
                   style={styles.playerCard}
                   onPress={() =>
                     router.push({
                       pathname: "/player",
-                      params: { playerId: i },
+                      params: { playerId: p.player.id },
                     })
                   }
                 >
                   <Text style={styles.playerName}>
-                    {p.player.first_name + p.player.last_name}
+                    {p.player.first_name + " " + p.player.last_name}
                   </Text>
                   <Text>{p.pts} Pts.</Text>
                 </TouchableOpacity>
@@ -135,62 +165,62 @@ export default function GameScreen() {
       ) : (
         <></>
       )}
-
-      {/* 📊 Stats Table */}
-      {stats.length > 0 ? (
-        <View>
-          <View style={styles.table}>
-            <View style={styles.rowHeader}>
-              <View style={[styles.cell, styles.nameCol]}>
-                <Text style={styles.nameText}>Name</Text>
-              </View>
-              <View style={styles.cell}>
-                <Text style={styles.centerText}>Pts.</Text>
-              </View>
-              <View style={styles.cell}>
-                <Text style={styles.centerText}>Ast.</Text>
-              </View>
-              <View style={styles.cell}>
-                <Text style={styles.centerText}>Reb.</Text>
-              </View>
-            </View>
-
-            {stats ? (
-              stats.map((p, i) => (
-                <View key={i} style={styles.row}>
-                  <TouchableOpacity
-                    style={[styles.cell, styles.nameCol]}
-                    onPress={() =>
-                      router.push({
-                        pathname: "/player",
-                        params: { playerId: i },
-                      })
-                    }
-                  >
-                    <Text style={styles.nameText}>
-                      {p.player.first_name + " " + p.player.last_name}
-                    </Text>
-                  </TouchableOpacity>
-
-                  <View style={styles.cell}>
-                    <Text style={styles.centerText}>{p.pts}</Text>
-                  </View>
-                  <View style={styles.cell}>
-                    <Text style={styles.centerText}>{p.ast}</Text>
-                  </View>
-                  <View style={styles.cell}>
-                    <Text style={styles.centerText}>{p.reb}</Text>
-                  </View>
+      <ScrollView>
+        {stats.length > 0 ? (
+          <View>
+            <View style={styles.table}>
+              <View style={styles.rowHeader}>
+                <View style={[styles.cell, styles.nameCol]}>
+                  <Text style={styles.nameText}>Name</Text>
                 </View>
-              ))
-            ) : (
-              <></>
-            )}
+                <View style={styles.cell}>
+                  <Text style={styles.centerText}>Pts.</Text>
+                </View>
+                <View style={styles.cell}>
+                  <Text style={styles.centerText}>Ast.</Text>
+                </View>
+                <View style={styles.cell}>
+                  <Text style={styles.centerText}>Reb.</Text>
+                </View>
+              </View>
+
+              {stats ? (
+                stats.map((p, i) => (
+                  <View key={i} style={styles.row}>
+                    <TouchableOpacity
+                      style={[styles.cell, styles.nameCol]}
+                      onPress={() =>
+                        router.push({
+                          pathname: "/player",
+                          params: { playerId: p.player.id },
+                        })
+                      }
+                    >
+                      <Text style={styles.nameText}>
+                        {p.player.first_name + " " + p.player.last_name}
+                      </Text>
+                    </TouchableOpacity>
+
+                    <View style={styles.cell}>
+                      <Text style={styles.centerText}>{p.pts}</Text>
+                    </View>
+                    <View style={styles.cell}>
+                      <Text style={styles.centerText}>{p.ast}</Text>
+                    </View>
+                    <View style={styles.cell}>
+                      <Text style={styles.centerText}>{p.reb}</Text>
+                    </View>
+                  </View>
+                ))
+              ) : (
+                <></>
+              )}
+            </View>
           </View>
-        </View>
-      ) : (
-        <></>
-      )}
+        ) : (
+          <></>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -275,11 +305,11 @@ const styles = StyleSheet.create({
   cell: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center", // center everything by default
+    alignItems: "center",
   },
 
   nameText: {
-    alignSelf: "flex-start", // 👈 forces left alignment
+    alignSelf: "flex-start",
   },
 
   centerText: {

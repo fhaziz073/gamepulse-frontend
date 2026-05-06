@@ -67,7 +67,7 @@ export default function TeamScreen() {
           onPress={() =>
             router.push({
               pathname: "/game",
-              params: { gameId: teamId },
+              params: { teamId: teamId, gameId: null },
             })
           }
         >

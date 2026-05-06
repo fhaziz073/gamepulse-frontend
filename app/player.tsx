@@ -140,67 +140,18 @@ export default function Player() {
                 <Text style={styles.headerCell}>AST</Text>
               </View>
               {stats.map((item) => (
-                <View key={item.id.toString()} style={styles.statsRow}>
-                  <Text style={[styles.statsCell]}>{item.game.date}</Text>
-                  <Text style={styles.statsCell}>
-                    {item.game.visitor_team_id !== player!.team.id
-                      ? ALL_NBA_TEAMS[item.game.visitor_team_id - 1].id
-                      : ALL_NBA_TEAMS[item.game.home_team_id - 1].id}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.mobileStatsCell,
-                      {
-                        color:
-                          (item.game.visitor_team_id === player!.team.id &&
-                            item.game.visitor_team_score >
-                              item.game.home_team_score) ||
-                          (item.game.home_team_id === player!.team.id &&
-                            item.game.home_team_score >
-                              item.game.visitor_team_score)
-                            ? "green"
-                            : "red",
-                      },
-                    ]}
-                  >
-                    {item.game.home_team_score}-{item.game.visitor_team_score}{" "}
-                    {(item.game.visitor_team_id === player!.team.id &&
-                      item.game.visitor_team_score >
-                        item.game.home_team_score) ||
-                    (item.game.home_team_id === player!.team.id &&
-                      item.game.home_team_score > item.game.visitor_team_score)
-                      ? "W"
-                      : "L"}
-                  </Text>
-                  <Text style={styles.statsCell}>{item.min}</Text>
-                  <Text style={styles.statsCell}>{item.pts}</Text>
-                  <Text style={styles.statsCell}>{item.reb}</Text>
-                  <Text style={styles.statsCell}>{item.ast}</Text>
-                </View>
-              ))}
-            </View>
-          ) : (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: 16 }}
-            >
-              <View>
-                <View style={styles.statsHeaderRow}>
-                  <Text style={styles.mobileHeaderCell}>Date</Text>
-                  <Text style={styles.mobileHeaderCell}>Opp</Text>
-                  <Text style={styles.mobileHeaderCell}>Result</Text>
-                  <Text style={styles.mobileHeaderCell}>MIN</Text>
-                  <Text style={styles.mobileHeaderCell}>PTS</Text>
-                  <Text style={styles.mobileHeaderCell}>REB</Text>
-                  <Text style={styles.mobileHeaderCell}>AST</Text>
-                </View>
-                {stats.map((item) => (
-                  <View key={item.id.toString()} style={styles.statsRow}>
-                    <Text style={[styles.mobileStatsCell]}>
-                      {item.game.date}
-                    </Text>
-                    <Text style={styles.mobileStatsCell}>
+                <TouchableOpacity
+                  key={item.id.toString()}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/game",
+                      params: { teamId: null, gameId: item.game.id },
+                    })
+                  }
+                >
+                  <View style={styles.statsRow}>
+                    <Text style={[styles.statsCell]}>{item.game.date}</Text>
+                    <Text style={styles.statsCell}>
                       {item.game.visitor_team_id !== player!.team.id
                         ? ALL_NBA_TEAMS[item.game.visitor_team_id - 1].id
                         : ALL_NBA_TEAMS[item.game.home_team_id - 1].id}
@@ -231,11 +182,82 @@ export default function Player() {
                         ? "W"
                         : "L"}
                     </Text>
-                    <Text style={styles.mobileStatsCell}>{item.min}</Text>
-                    <Text style={styles.mobileStatsCell}>{item.pts}</Text>
-                    <Text style={styles.mobileStatsCell}>{item.reb}</Text>
-                    <Text style={styles.mobileStatsCell}>{item.ast}</Text>
+                    <Text style={styles.statsCell}>{item.min}</Text>
+                    <Text style={styles.statsCell}>{item.pts}</Text>
+                    <Text style={styles.statsCell}>{item.reb}</Text>
+                    <Text style={styles.statsCell}>{item.ast}</Text>
                   </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ) : (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 16 }}
+            >
+              <View>
+                <View style={styles.statsHeaderRow}>
+                  <Text style={styles.mobileHeaderCell}>Date</Text>
+                  <Text style={styles.mobileHeaderCell}>Opp</Text>
+                  <Text style={styles.mobileHeaderCell}>Result</Text>
+                  <Text style={styles.mobileHeaderCell}>MIN</Text>
+                  <Text style={styles.mobileHeaderCell}>PTS</Text>
+                  <Text style={styles.mobileHeaderCell}>REB</Text>
+                  <Text style={styles.mobileHeaderCell}>AST</Text>
+                </View>
+                {stats.map((item) => (
+                  <TouchableOpacity
+                    key={item.id.toString()}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/game",
+                        params: { teamId: null, gameId: item.game.id },
+                      })
+                    }
+                  >
+                    <View style={styles.statsRow}>
+                      <Text style={[styles.mobileStatsCell]}>
+                        {item.game.date}
+                      </Text>
+                      <Text style={styles.mobileStatsCell}>
+                        {item.game.visitor_team_id !== player!.team.id
+                          ? ALL_NBA_TEAMS[item.game.visitor_team_id - 1].id
+                          : ALL_NBA_TEAMS[item.game.home_team_id - 1].id}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.mobileStatsCell,
+                          {
+                            color:
+                              (item.game.visitor_team_id === player!.team.id &&
+                                item.game.visitor_team_score >
+                                  item.game.home_team_score) ||
+                              (item.game.home_team_id === player!.team.id &&
+                                item.game.home_team_score >
+                                  item.game.visitor_team_score)
+                                ? "green"
+                                : "red",
+                          },
+                        ]}
+                      >
+                        {item.game.home_team_score}-
+                        {item.game.visitor_team_score}{" "}
+                        {(item.game.visitor_team_id === player!.team.id &&
+                          item.game.visitor_team_score >
+                            item.game.home_team_score) ||
+                        (item.game.home_team_id === player!.team.id &&
+                          item.game.home_team_score >
+                            item.game.visitor_team_score)
+                          ? "W"
+                          : "L"}
+                      </Text>
+                      <Text style={styles.mobileStatsCell}>{item.min}</Text>
+                      <Text style={styles.mobileStatsCell}>{item.pts}</Text>
+                      <Text style={styles.mobileStatsCell}>{item.reb}</Text>
+                      <Text style={styles.mobileStatsCell}>{item.ast}</Text>
+                    </View>
+                  </TouchableOpacity>
                 ))}
               </View>
             </ScrollView>
@@ -348,30 +370,64 @@ const input = (
         <View style={styles.container}>
           <Text style={styles.nextGameHeader}>Next Game</Text>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-            <Image
-              style={styles.teamLogo}
-              resizeMode="contain"
-              source={
-                ALL_NBA_TEAMS[
-                  ALL_NBA_TEAMS.findIndex(
-                    (team) =>
-                      team.name.split(" ").at(-1) === data.title.split(" ")[0],
-                  )
-                ].logo
+            <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: "/team",
+                  params: {
+                    teamId:
+                      ALL_NBA_TEAMS.findIndex(
+                        (team) =>
+                          team.name.split(" ").at(-1) ===
+                          data.title.split(" ")[0],
+                      ) + 1,
+                  },
+                })
               }
-            />
+            >
+              <Image
+                style={styles.teamLogo}
+                resizeMode="contain"
+                source={
+                  ALL_NBA_TEAMS[
+                    ALL_NBA_TEAMS.findIndex(
+                      (team) =>
+                        team.name.split(" ").at(-1) ===
+                        data.title.split(" ")[0],
+                    )
+                  ].logo
+                }
+              />
+            </TouchableOpacity>
             <Text style={styles.vs}>vs.</Text>
-            <Image
-              style={styles.teamLogo}
-              source={
-                ALL_NBA_TEAMS[
-                  ALL_NBA_TEAMS.findIndex(
-                    (team) =>
-                      team.name.split(" ").at(-1) === data.title.split(" ")[2],
-                  )
-                ].logo
+            <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: "/team",
+                  params: {
+                    teamId:
+                      ALL_NBA_TEAMS.findIndex(
+                        (team) =>
+                          team.name.split(" ").at(-1) ===
+                          data.title.split(" ")[2],
+                      ) + 1,
+                  },
+                })
               }
-            />
+            >
+              <Image
+                style={styles.teamLogo}
+                source={
+                  ALL_NBA_TEAMS[
+                    ALL_NBA_TEAMS.findIndex(
+                      (team) =>
+                        team.name.split(" ").at(-1) ===
+                        data.title.split(" ")[2],
+                    )
+                  ].logo
+                }
+              />
+            </TouchableOpacity>
           </View>
           <Text style={styles.nextGameTime}>
             {new Date(data.start).toDateString() +
