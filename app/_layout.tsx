@@ -48,9 +48,12 @@ function StackLayout() {
         <Stack.Screen name="signup" />
       </Stack.Protected>
       <Stack.Protected guard={!!isLoggedIn}>
-        <Stack.Screen name="index" options={{ headerTitle: "Home" }} />
-        <Stack.Screen name="calendar" options={{ headerTitle: "" }} />
-        <Stack.Screen name="player" options={{ headerTitle: "" }} />
+        <Stack.Screen
+          name="index"
+          options={{ headerShown: false, headerTitle: "Home" }}
+        />
+        <Stack.Screen name="calendar" options={{ headerTitle: "Calendar" }} />
+        <Stack.Screen name="player" options={{ headerTitle: "Player" }} />
       </Stack.Protected>
     </Stack>
   );
