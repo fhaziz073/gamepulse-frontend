@@ -135,8 +135,29 @@ export default function Player() {
                     ? ALL_NBA_TEAMS[item.game.visitor_team_id - 1].id
                     : ALL_NBA_TEAMS[item.game.home_team_id - 1].id}
                 </Text>
-                <Text style={styles.statsCell}>
-                  {item.game.home_team_score}-{item.game.visitor_team_score}
+                <Text
+                  style={[
+                    styles.mobileStatsCell,
+                    {
+                      color:
+                        (item.game.visitor_team_id === player!.team.id &&
+                          item.game.visitor_team_score >
+                            item.game.home_team_score) ||
+                        (item.game.home_team_id === player!.team.id &&
+                          item.game.home_team_score >
+                            item.game.visitor_team_score)
+                          ? "green"
+                          : "red",
+                    },
+                  ]}
+                >
+                  {item.game.home_team_score}-{item.game.visitor_team_score}{" "}
+                  {(item.game.visitor_team_id === player!.team.id &&
+                    item.game.visitor_team_score > item.game.home_team_score) ||
+                  (item.game.home_team_id === player!.team.id &&
+                    item.game.home_team_score > item.game.visitor_team_score)
+                    ? "W"
+                    : "L"}
                 </Text>
                 <Text style={styles.statsCell}>{item.min}</Text>
                 <Text style={styles.statsCell}>{item.pts}</Text>
@@ -169,8 +190,30 @@ export default function Player() {
                       ? ALL_NBA_TEAMS[item.game.visitor_team_id - 1].id
                       : ALL_NBA_TEAMS[item.game.home_team_id - 1].id}
                   </Text>
-                  <Text style={styles.mobileStatsCell}>
-                    {item.game.home_team_score}-{item.game.visitor_team_score}
+                  <Text
+                    style={[
+                      styles.mobileStatsCell,
+                      {
+                        color:
+                          (item.game.visitor_team_id === player!.team.id &&
+                            item.game.visitor_team_score >
+                              item.game.home_team_score) ||
+                          (item.game.home_team_id === player!.team.id &&
+                            item.game.home_team_score >
+                              item.game.visitor_team_score)
+                            ? "green"
+                            : "red",
+                      },
+                    ]}
+                  >
+                    {item.game.home_team_score}-{item.game.visitor_team_score}{" "}
+                    {(item.game.visitor_team_id === player!.team.id &&
+                      item.game.visitor_team_score >
+                        item.game.home_team_score) ||
+                    (item.game.home_team_id === player!.team.id &&
+                      item.game.home_team_score > item.game.visitor_team_score)
+                      ? "W"
+                      : "L"}
                   </Text>
                   <Text style={styles.mobileStatsCell}>{item.min}</Text>
                   <Text style={styles.mobileStatsCell}>{item.pts}</Text>
