@@ -1,13 +1,8 @@
 import { NBAPlayer } from "@balldontlie/sdk";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { link } from "./_layout";
 import { event } from "./types";
 
@@ -24,9 +19,11 @@ export default function TeamScreen() {
 
   const loadPlaceholderData = async () => {
     const players: NBAPlayer[] = await (
-      await fetch(`${link}/teams?ids=20`)
+      await fetch(`${link}/teams?ids=${teamId}`)
     ).json();
-    const game: event = (await (await fetch(`${link}/calendar/20`)).json())[0];
+    const game: event = (
+      await (await fetch(`${link}/calendar/${teamId}`)).json()
+    )[0];
     console.log(game);
     setPlayers(players);
     setNextGame(game);
@@ -52,14 +49,16 @@ export default function TeamScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* 🔙 Back Button */}
       <TouchableOpacity onPress={() => router.back()}>
         <Text style={styles.backButton}>← Back</Text>
       </TouchableOpacity>
 
       {/* 🏀 Team Header */}
-      <Text style={styles.teamName}>Team {teamId}</Text>
+      <Text style={styles.teamName}>
+        {players.length > 0 ? players[0].team.full_name : ""}
+      </Text>
 
       {/* 📅 Next Game */}
       {nextGame && (
@@ -68,7 +67,7 @@ export default function TeamScreen() {
           onPress={() =>
             router.push({
               pathname: "/game",
-              params: { gameId: nextGame.title },
+              params: { gameId: teamId },
             })
           }
         >
@@ -86,7 +85,7 @@ export default function TeamScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderPlayer}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

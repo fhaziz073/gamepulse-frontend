@@ -1,10 +1,18 @@
 import { NBAPlayer, NBASeasonAverages } from "@balldontlie/sdk";
 import { LinearGradient } from "expo-linear-gradient";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, Platform, Text, useWindowDimensions, View } from "react-native";
+import {
+  Image,
+  Platform,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { ScrollView } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { link } from "./_layout";
 import { ALL_NBA_TEAMS } from "./teams";
 import { event, game } from "./types";
@@ -105,85 +113,36 @@ export default function Player() {
       colors={["rgba(0,0,255,1)", "rgba(255, 236, 0, 1)"]}
       style={{ flex: 1 }}
     >
-      <ScrollView contentContainerStyle={{ flexDirection: "column" }}>
-        {player ? input(player, playerSeasonAvgs, injury, data) : <></>}
+      <SafeAreaView>
+        <View>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text style={styles.backButton}>← Back</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView contentContainerStyle={{ flexDirection: "column" }}>
+          {player ? input(player, playerSeasonAvgs, injury, data) : <></>}
 
-        {Platform.OS !== "ios" && Platform.OS !== "android" ? (
-          <View
-            style={{
-              marginHorizontal: 16,
-              marginTop: 16,
-              width: width - 32,
-            }}
-          >
-            <View style={styles.statsHeaderRow}>
-              <Text style={styles.headerCell}>Date</Text>
-              <Text style={styles.headerCell}>Opp</Text>
-              <Text style={styles.headerCell}>Result</Text>
-              <Text style={styles.headerCell}>MIN</Text>
-              <Text style={styles.headerCell}>PTS</Text>
-              <Text style={styles.headerCell}>REB</Text>
-              <Text style={styles.headerCell}>AST</Text>
-            </View>
-            {stats.map((item) => (
-              <View key={item.id.toString()} style={styles.statsRow}>
-                <Text style={[styles.statsCell]}>{item.game.date}</Text>
-                <Text style={styles.statsCell}>
-                  {item.game.visitor_team_id !== player!.team.id
-                    ? ALL_NBA_TEAMS[item.game.visitor_team_id - 1].id
-                    : ALL_NBA_TEAMS[item.game.home_team_id - 1].id}
-                </Text>
-                <Text
-                  style={[
-                    styles.mobileStatsCell,
-                    {
-                      color:
-                        (item.game.visitor_team_id === player!.team.id &&
-                          item.game.visitor_team_score >
-                            item.game.home_team_score) ||
-                        (item.game.home_team_id === player!.team.id &&
-                          item.game.home_team_score >
-                            item.game.visitor_team_score)
-                          ? "green"
-                          : "red",
-                    },
-                  ]}
-                >
-                  {item.game.home_team_score}-{item.game.visitor_team_score}{" "}
-                  {(item.game.visitor_team_id === player!.team.id &&
-                    item.game.visitor_team_score > item.game.home_team_score) ||
-                  (item.game.home_team_id === player!.team.id &&
-                    item.game.home_team_score > item.game.visitor_team_score)
-                    ? "W"
-                    : "L"}
-                </Text>
-                <Text style={styles.statsCell}>{item.min}</Text>
-                <Text style={styles.statsCell}>{item.pts}</Text>
-                <Text style={styles.statsCell}>{item.reb}</Text>
-                <Text style={styles.statsCell}>{item.ast}</Text>
-              </View>
-            ))}
-          </View>
-        ) : (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 16 }}
-          >
-            <View>
+          {Platform.OS !== "ios" && Platform.OS !== "android" ? (
+            <View
+              style={{
+                marginHorizontal: 16,
+                marginTop: 16,
+                width: width - 32,
+              }}
+            >
               <View style={styles.statsHeaderRow}>
-                <Text style={styles.mobileHeaderCell}>Date</Text>
-                <Text style={styles.mobileHeaderCell}>Opp</Text>
-                <Text style={styles.mobileHeaderCell}>Result</Text>
-                <Text style={styles.mobileHeaderCell}>MIN</Text>
-                <Text style={styles.mobileHeaderCell}>PTS</Text>
-                <Text style={styles.mobileHeaderCell}>REB</Text>
-                <Text style={styles.mobileHeaderCell}>AST</Text>
+                <Text style={styles.headerCell}>Date</Text>
+                <Text style={styles.headerCell}>Opp</Text>
+                <Text style={styles.headerCell}>Result</Text>
+                <Text style={styles.headerCell}>MIN</Text>
+                <Text style={styles.headerCell}>PTS</Text>
+                <Text style={styles.headerCell}>REB</Text>
+                <Text style={styles.headerCell}>AST</Text>
               </View>
               {stats.map((item) => (
                 <View key={item.id.toString()} style={styles.statsRow}>
-                  <Text style={[styles.mobileStatsCell]}>{item.game.date}</Text>
-                  <Text style={styles.mobileStatsCell}>
+                  <Text style={[styles.statsCell]}>{item.game.date}</Text>
+                  <Text style={styles.statsCell}>
                     {item.game.visitor_team_id !== player!.team.id
                       ? ALL_NBA_TEAMS[item.game.visitor_team_id - 1].id
                       : ALL_NBA_TEAMS[item.game.home_team_id - 1].id}
@@ -213,16 +172,76 @@ export default function Player() {
                       ? "W"
                       : "L"}
                   </Text>
-                  <Text style={styles.mobileStatsCell}>{item.min}</Text>
-                  <Text style={styles.mobileStatsCell}>{item.pts}</Text>
-                  <Text style={styles.mobileStatsCell}>{item.reb}</Text>
-                  <Text style={styles.mobileStatsCell}>{item.ast}</Text>
+                  <Text style={styles.statsCell}>{item.min}</Text>
+                  <Text style={styles.statsCell}>{item.pts}</Text>
+                  <Text style={styles.statsCell}>{item.reb}</Text>
+                  <Text style={styles.statsCell}>{item.ast}</Text>
                 </View>
               ))}
             </View>
-          </ScrollView>
-        )}
-      </ScrollView>
+          ) : (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 16 }}
+            >
+              <View>
+                <View style={styles.statsHeaderRow}>
+                  <Text style={styles.mobileHeaderCell}>Date</Text>
+                  <Text style={styles.mobileHeaderCell}>Opp</Text>
+                  <Text style={styles.mobileHeaderCell}>Result</Text>
+                  <Text style={styles.mobileHeaderCell}>MIN</Text>
+                  <Text style={styles.mobileHeaderCell}>PTS</Text>
+                  <Text style={styles.mobileHeaderCell}>REB</Text>
+                  <Text style={styles.mobileHeaderCell}>AST</Text>
+                </View>
+                {stats.map((item) => (
+                  <View key={item.id.toString()} style={styles.statsRow}>
+                    <Text style={[styles.mobileStatsCell]}>
+                      {item.game.date}
+                    </Text>
+                    <Text style={styles.mobileStatsCell}>
+                      {item.game.visitor_team_id !== player!.team.id
+                        ? ALL_NBA_TEAMS[item.game.visitor_team_id - 1].id
+                        : ALL_NBA_TEAMS[item.game.home_team_id - 1].id}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.mobileStatsCell,
+                        {
+                          color:
+                            (item.game.visitor_team_id === player!.team.id &&
+                              item.game.visitor_team_score >
+                                item.game.home_team_score) ||
+                            (item.game.home_team_id === player!.team.id &&
+                              item.game.home_team_score >
+                                item.game.visitor_team_score)
+                              ? "green"
+                              : "red",
+                        },
+                      ]}
+                    >
+                      {item.game.home_team_score}-{item.game.visitor_team_score}{" "}
+                      {(item.game.visitor_team_id === player!.team.id &&
+                        item.game.visitor_team_score >
+                          item.game.home_team_score) ||
+                      (item.game.home_team_id === player!.team.id &&
+                        item.game.home_team_score >
+                          item.game.visitor_team_score)
+                        ? "W"
+                        : "L"}
+                    </Text>
+                    <Text style={styles.mobileStatsCell}>{item.min}</Text>
+                    <Text style={styles.mobileStatsCell}>{item.pts}</Text>
+                    <Text style={styles.mobileStatsCell}>{item.reb}</Text>
+                    <Text style={styles.mobileStatsCell}>{item.ast}</Text>
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+          )}
+        </ScrollView>
+      </SafeAreaView>
     </LinearGradient>
   );
 }
@@ -485,5 +504,9 @@ const styles = EStyleSheet.create({
     textAlign: "center",
     fontFamily: "JosefinSans_400Regular",
     fontSize: "1.5rem",
+  },
+  backButton: {
+    color: "white",
+    marginBottom: 10,
   },
 });

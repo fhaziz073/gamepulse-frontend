@@ -1,33 +1,23 @@
-import { useRouter } from 'expo-router';
-import React from 'react';
-import {
-    Button,
-    FlatList,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
-} from 'react-native';
+import { useRouter } from "expo-router";
+import React from "react";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import EStyleSheet from "react-native-extended-stylesheet";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ALL_NBA_TEAMS } from "./teams";
 
 export default function TeamsScreen() {
   const router = useRouter();
 
   //Placeholder list
-  const teams = [
-    { id: 1, name: 'New York Knicks' },
-    { id: 2, name: 'Chicago Bulls' },
-    { id: 3, name: 'Los Angeles Lakers' },
-    { id: 4, name: 'Golden State Warriors' },
-    { id: 5, name: 'Boston Celtics' }
-  ];
+  const teams = ALL_NBA_TEAMS;
 
-  const renderTeam = ({ item }: any) => (
+  const renderTeam = ({ item }: { item: (typeof ALL_NBA_TEAMS)[0] }) => (
     <TouchableOpacity
       style={styles.teamRow}
       onPress={() =>
         router.push({
-          pathname: '/team',
-          params: { teamId: item.id }
+          pathname: "/team",
+          params: { teamId: ALL_NBA_TEAMS.indexOf(item) + 1 },
         })
       }
     >
@@ -36,8 +26,7 @@ export default function TeamsScreen() {
   );
 
   return (
-    <View style={styles.container}>
-
+    <SafeAreaView style={styles.container}>
       {/* 🔙 Back Button */}
       <TouchableOpacity onPress={() => router.back()}>
         <Text style={styles.backButton}>← Back</Text>
@@ -55,60 +44,53 @@ export default function TeamsScreen() {
 
       {/* 🔽 Bottom Navigation (match your index.tsx) */}
       <View style={styles.navBar}>
-        <Button
-          title="Calendar"
-          onPress={() => router.navigate("/calendar")}
-          color="#303234"
-        />
-        <Button
-          title="Preferences"
-          onPress={() => router.navigate("/preferences")}
-          color="#303234"
-        />
-        <Button
-          title="Player"
-          onPress={() => router.navigate("/player")}
-          color="#303234"
-        />
-        <Button
-          title="Stat Analytics"
-          onPress={() => router.navigate("/visualization")}
-          color="#303234"
-        />
+        <TouchableOpacity onPress={() => router.navigate("/calendar")}>
+          <Text style={styles.menuButton}>Calendar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.navigate("/visualization")}>
+          <Text style={styles.menuButton}>Stat Analytics</Text>
+        </TouchableOpacity>
       </View>
-
-    </View>
+    </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = EStyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#0f172a'
+    backgroundColor: "#0f172a",
   },
   backButton: {
-    color: 'white',
-    marginBottom: 10
+    color: "white",
+    marginBottom: 10,
   },
   title: {
     fontSize: 28,
-    color: 'white',
-    marginBottom: 16
+    color: "white",
+    marginBottom: 16,
   },
   teamRow: {
-    backgroundColor: '#0f252a',
+    backgroundColor: "#0f252a",
     padding: 16,
     borderRadius: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   teamName: {
     fontSize: 20,
-    color: '#FAF9F6'
+    color: "#FAF9F6",
   },
   navBar: {
     marginTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-around'
-  }
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  menuButton: {
+    backgroundColor: "#303234",
+    color: "white",
+    fontSize: "1rem",
+    padding: "0.5rem",
+    borderRadius: 3,
+    fontFamily: "JosefinSans_400Regular",
+  },
 });

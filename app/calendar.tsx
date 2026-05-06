@@ -1,6 +1,7 @@
+import { router } from "expo-router";
 import groupBy from "lodash/groupBy";
 import React, { Component, useEffect, useState } from "react";
-import { View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import {
   CalendarProvider,
   CalendarUtils,
@@ -191,6 +192,9 @@ export default function Index() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.to}>
+          <Text style={styles.backButton}>← Back</Text>
+        </TouchableOpacity>
         <TimelineCalendarScreen newEvents={data} />
       </SafeAreaView>
     </SafeAreaProvider>
@@ -200,4 +204,9 @@ const styles = EStyleSheet.create({
   timeline: {
     maxHeight: "36rem",
   },
+  backButton: {
+    color: "white",
+    marginBottom: 10,
+  },
+  to: { backgroundColor: "#0f252a", paddingTop: 10 },
 });

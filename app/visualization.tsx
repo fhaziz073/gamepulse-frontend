@@ -1,13 +1,13 @@
 import {
-    font,
-    getSemantic,
-    insightCompact,
-    playerNameText,
-    scout,
-    scoutAreaA,
-    scoutAreaB,
-    scoutAreaSingle,
-    SemanticColors,
+  font,
+  getSemantic,
+  insightCompact,
+  playerNameText,
+  scout,
+  scoutAreaA,
+  scoutAreaB,
+  scoutAreaSingle,
+  SemanticColors,
 } from "@/theme";
 import { absenceMarkerForLineItem } from "@/utils/chartAbsenceMarkers";
 import { buildChartCardSubtitle } from "@/utils/chartCardSubtitle";
@@ -17,40 +17,41 @@ import { applyStatBasisToSeriesList, StatBasis } from "@/utils/statBasis";
 import { Ionicons } from "@expo/vector-icons";
 import type { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import BottomSheet, {
-    BottomSheetBackdrop,
-    BottomSheetScrollView,
-    BottomSheetTextInput,
+  BottomSheetBackdrop,
+  BottomSheetScrollView,
+  BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import axios, { isAxiosError } from "axios";
 import Constants from "expo-constants";
+import { router } from "expo-router";
 import type { DataSet, lineDataItem } from "gifted-charts-core";
 import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 import {
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    useColorScheme,
-    useWindowDimensions,
-    View,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  useWindowDimensions,
+  View,
 } from "react-native";
 import { Calendar, DateData } from "react-native-calendars";
 import { LineChart } from "react-native-gifted-charts";
 import {
-    SafeAreaView,
-    useSafeAreaInsets,
+  SafeAreaView,
+  useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { link } from "./_layout";
 
@@ -1006,6 +1007,9 @@ export default function App() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <View style={styles.mainShell}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Text style={styles.backButton}>← Back</Text>
+        </TouchableOpacity>
         <KeyboardAvoidingView
           style={styles.keyboardView}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -3062,6 +3066,10 @@ function createStyles(sem: SemanticColors) {
       fontFamily: font.semibold,
       fontWeight: "600",
       fontSize: 15,
+    },
+    backButton: {
+      color: "white",
+      marginBottom: 10,
     },
   });
 }

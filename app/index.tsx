@@ -2,7 +2,8 @@ import { setUserInfo } from "@/features/stateSlice";
 import { font } from "@/theme";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Button, SectionList, StyleSheet, Text, View } from "react-native";
+import { SectionList, Text, TouchableOpacity, View } from "react-native";
+import EStyleSheet from "react-native-extended-stylesheet";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useAppDispatch } from "./hooks";
 
@@ -71,37 +72,24 @@ export default function Index() {
           backgroundColor: "#0f172a",
         }}
       >
-        <Button
-          title="Calendar"
-          onPress={() => router.navigate("/calendar")}
-          color={"#303234"}
-        />
-        <Button
-          title="Stat Analytics"
-          onPress={() => router.navigate("/visualization")}
-          color={"#303234"}
-        />
-        <Button
-          title="Game"
-          onPress={() => router.navigate("/game")}
-          color={"#303234"}
-        />
-        <Button
-          title="Team"
-          onPress={() => router.navigate("/team")}
-          color={"#303234"}
-        />
-        <Button
-          title="Log Out"
-          onPress={() => dispatch(setUserInfo(null))}
-          color={"#303234"}
-        />
+        <TouchableOpacity onPress={() => router.navigate("/calendar")}>
+          <Text style={styles.menuButton}>Calendar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.navigate("/visualization")}>
+          <Text style={styles.menuButton}>Stat Analytics</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.navigate("/team_select")}>
+          <Text style={styles.menuButton}>Teams</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => dispatch(setUserInfo(null))}>
+          <Text style={styles.menuButton}>Log Out</Text>
+        </TouchableOpacity>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = EStyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
@@ -123,5 +111,13 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "#FAF9F6",
     fontFamily: font.regular,
+  },
+  menuButton: {
+    backgroundColor: "#303234",
+    color: "white",
+    fontSize: "1rem",
+    padding: "0.5rem",
+    borderRadius: 3,
+    fontFamily: "JosefinSans_400Regular",
   },
 });

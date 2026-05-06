@@ -52,8 +52,30 @@ function StackLayout() {
           name="index"
           options={{ headerShown: false, headerTitle: "Home" }}
         />
-        <Stack.Screen name="calendar" options={{ headerTitle: "Calendar" }} />
-        <Stack.Screen name="player" options={{ headerTitle: "Player" }} />
+        <Stack.Screen
+          name="calendar"
+          options={{ headerShown: false, headerTitle: "Calendar" }}
+        />
+        <Stack.Screen
+          name="player"
+          options={{ headerShown: false, headerTitle: "Player" }}
+        />
+        <Stack.Screen
+          name="visualization"
+          options={{ headerShown: false, headerTitle: "Stat Analytics" }}
+        />
+        <Stack.Screen
+          name="team_select"
+          options={{ headerShown: false, headerTitle: "Teams" }}
+        />
+        <Stack.Screen
+          name="team"
+          options={{ headerShown: false, headerTitle: "Team" }}
+        />
+        <Stack.Screen
+          name="game"
+          options={{ headerShown: false, headerTitle: "Game" }}
+        />
       </Stack.Protected>
     </Stack>
   );
