@@ -77,11 +77,6 @@ export default function Index() {
           color={"#303234"}
         />
         <Button
-          title="Player"
-          onPress={() => router.navigate("/player")}
-          color={"#303234"}
-        />
-        <Button
           title="Stat Analytics"
           onPress={() => router.navigate("/visualization")}
           color={"#303234"}

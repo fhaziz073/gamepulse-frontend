@@ -152,4 +152,6 @@ const WESTERN_CONFERENCE = [
     logo: require("../assets/images/team_logos/Utah Jazz.png"),
   },
 ];
-export const ALL_NBA_TEAMS = EASTERN_CONFERENCE.concat(WESTERN_CONFERENCE);
+export const ALL_NBA_TEAMS = EASTERN_CONFERENCE.concat(WESTERN_CONFERENCE).sort(
+  (a, b) => a.name.localeCompare(b.name),
+);

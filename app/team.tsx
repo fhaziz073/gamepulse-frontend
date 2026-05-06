@@ -1,65 +1,58 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { NBAPlayer } from "@balldontlie/sdk";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
-} from 'react-native';
+  View,
+} from "react-native";
+import { link } from "./_layout";
+import { event } from "./types";
 
 export default function TeamScreen() {
   const router = useRouter();
   const { teamId } = useLocalSearchParams();
 
-  // 🔹 Placeholder data (replace with API later)
-  const [players, setPlayers] = useState<any[]>([]);
-  const [nextGame, setNextGame] = useState<any>(null);
+  const [players, setPlayers] = useState<NBAPlayer[]>([]);
+  const [nextGame, setNextGame] = useState<event | null>(null);
 
   useEffect(() => {
     loadPlaceholderData();
   }, []);
 
-  const loadPlaceholderData = () => {
-    //Placeholders
-    const playersPlaceholder = [
-      { id: 1, name: 'J. Brunson', position: 'PG', points: 27.2 },
-      { id: 2, name: 'K. Towns', position: 'C', points: 19.8 },
-      { id: 3, name: 'O. Anunoby', position: 'SF', points: 14.3 },
-      { id: 4, name: 'M. Bridges', position: 'SG', points: 12.1 }
-    ];
- 
-    // Fake next game
-    const gamePlaceholder = {
-      id: 101,
-      opponent: 'Chicago Bulls',
-      date: '2026-05-10T19:30:00'
-    };
-
-    setPlayers(playersPlaceholder);
-    setNextGame(gamePlaceholder);
+  const loadPlaceholderData = async () => {
+    const players: NBAPlayer[] = await (
+      await fetch(`${link}/teams?ids=20`)
+    ).json();
+    const game: event = (await (await fetch(`${link}/calendar/20`)).json())[0];
+    console.log(game);
+    setPlayers(players);
+    setNextGame(game);
   };
 
   // 👤 Player row
-  const renderPlayer = ({ item }: any) => (
+  const renderPlayer = ({ item }: { item: NBAPlayer }) => (
     <TouchableOpacity
       style={styles.playerRow}
       onPress={() =>
         router.push({
-          pathname: '/player',
-          params: { playerId: item.id }
+          pathname: "/player",
+          params: { playerId: item.id },
         })
       }
     >
-      <Text style={styles.playerName}>{item.name}</Text>
+      <Text style={styles.playerName}>
+        {item.first_name + " " + item.last_name}
+      </Text>
       <Text>{item.position}</Text>
-      <Text>{item.points} PPG</Text>
+      <Text>#{item.jersey_number}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-
       {/* 🔙 Back Button */}
       <TouchableOpacity onPress={() => router.back()}>
         <Text style={styles.backButton}>← Back</Text>
@@ -74,14 +67,14 @@ export default function TeamScreen() {
           style={styles.gameCard}
           onPress={() =>
             router.push({
-              pathname: '/game',
-              params: { gameId: nextGame.id }
+              pathname: "/game",
+              params: { gameId: nextGame.title },
             })
           }
         >
           <Text style={styles.sectionTitle}>Next Game</Text>
-          <Text>{nextGame.opponent}</Text>
-          <Text>{new Date(nextGame.date).toLocaleString()}</Text>
+          <Text>{nextGame.title}</Text>
+          <Text>{new Date(nextGame.start).toLocaleString()}</Text>
         </TouchableOpacity>
       )}
 
@@ -93,7 +86,6 @@ export default function TeamScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderPlayer}
       />
-
     </View>
   );
 }
@@ -102,36 +94,36 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#1e1e1e'
+    backgroundColor: "#1e1e1e",
   },
   backButton: {
-    color: 'white',
-    marginBottom: 10
+    color: "white",
+    marginBottom: 10,
   },
   teamName: {
     fontSize: 28,
-    color: 'white',
-    fontWeight: 'bold',
-    marginBottom: 16
+    color: "white",
+    fontWeight: "bold",
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 18,
-    color: 'white',
-    marginVertical: 10
+    color: "white",
+    marginVertical: 10,
   },
   gameCard: {
-    backgroundColor: '#f97316',
+    backgroundColor: "#f97316",
     padding: 12,
     borderRadius: 10,
-    marginBottom: 16
+    marginBottom: 16,
   },
   playerRow: {
-    backgroundColor: '#eee',
+    backgroundColor: "#eee",
     padding: 12,
     borderRadius: 10,
-    marginBottom: 8
+    marginBottom: 8,
   },
   playerName: {
-    fontWeight: 'bold'
-  }
+    fontWeight: "bold",
+  },
 });

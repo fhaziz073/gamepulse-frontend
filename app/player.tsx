@@ -1,5 +1,6 @@
 import { NBAPlayer, NBASeasonAverages } from "@balldontlie/sdk";
 import { LinearGradient } from "expo-linear-gradient";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, Platform, Text, useWindowDimensions, View } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
@@ -9,7 +10,8 @@ import { ALL_NBA_TEAMS } from "./teams";
 import { event, game } from "./types";
 
 export default function Player() {
-  const [player, setPlayer] = useState<NBAPlayer[]>([]);
+  const { playerId } = useLocalSearchParams();
+  const [player, setPlayer] = useState<NBAPlayer | null>(null);
   const [playerSeasonAvgs, setPlayerSeasonAvgs] = useState<NBASeasonAverages[]>(
     [],
   );
@@ -20,19 +22,19 @@ export default function Player() {
   useEffect(() => {
     async function getPlayer() {
       let response = null;
-      response = await fetch(`${link}/players?firstName=Nikola&lastName=Jokic`);
+      response = await fetch(`${link}/players/${playerId}`);
       console.log(response);
       let players = await response.json();
       console.log(players);
       setPlayer(players);
     }
     getPlayer();
-  }, []);
+  }, [playerId]);
   useEffect(() => {
     async function getPlayerSeasonAvgs() {
-      if (player.length !== 0) {
+      if (player) {
         let seasonAvgsResponse = await fetch(
-          `${link}/players/${player[0].id}/seasonalStatAvgs`,
+          `${link}/players/${player.id}/seasonalStatAvgs`,
         );
         console.log(seasonAvgsResponse);
         let seasonAvgs = await seasonAvgsResponse.json();
@@ -47,7 +49,7 @@ export default function Player() {
     async function getNextGame() {
       try {
         let response = null;
-        response = await fetch(`${link}/calendar/${player[0].id}`);
+        response = await fetch(`${link}/calendar/${player?.id}`);
         console.log(response);
         let events = await response.json();
         console.log(events);
@@ -74,7 +76,7 @@ export default function Player() {
     async function getPlayerInjury() {
       try {
         let response = null;
-        response = await fetch(`${link}/players/${player[0].id}/injury`);
+        response = await fetch(`${link}/players/${player?.id}/injury`);
         console.log(response);
         let injury = await response.json();
         console.log(injury);
@@ -88,16 +90,14 @@ export default function Player() {
   }, [player]);
   useEffect(() => {
     async function getStats() {
-      try {
+      if (player) {
         let response = null;
-        response = await fetch(`${link}/players/${player[0].id}/stats`);
+        console.log();
+        response = await fetch(`${link}/players/${player?.id}/stats`);
         console.log(response);
         let stats = await response.json();
         console.log(stats);
         setStats(stats);
-      } catch {
-        console.log("Failed to fetch data");
-        setStats([]);
       }
     }
     getStats();
@@ -108,7 +108,7 @@ export default function Player() {
       style={{ flex: 1 }}
     >
       <ScrollView contentContainerStyle={{ flexDirection: "column" }}>
-        {input(player, playerSeasonAvgs, injury, data)}
+        {player ? input(player, playerSeasonAvgs, injury, data) : <></>}
 
         {Platform.OS !== "ios" && Platform.OS !== "android" ? (
           <View
@@ -131,7 +131,9 @@ export default function Player() {
               <View key={item.id.toString()} style={styles.statsRow}>
                 <Text style={[styles.statsCell]}>{item.game.date}</Text>
                 <Text style={styles.statsCell}>
-                  {ALL_NBA_TEAMS[item.game.visitor_team_id].id}
+                  {item.game.visitor_team_id !== player!.team.id
+                    ? ALL_NBA_TEAMS[item.game.visitor_team_id - 1].id
+                    : ALL_NBA_TEAMS[item.game.home_team_id - 1].id}
                 </Text>
                 <Text style={styles.statsCell}>
                   {item.game.home_team_score}-{item.game.visitor_team_score}
@@ -163,7 +165,9 @@ export default function Player() {
                 <View key={item.id.toString()} style={styles.statsRow}>
                   <Text style={[styles.mobileStatsCell]}>{item.game.date}</Text>
                   <Text style={styles.mobileStatsCell}>
-                    {ALL_NBA_TEAMS[item.game.visitor_team_id].id}
+                    {item.game.visitor_team_id !== player!.team.id
+                      ? ALL_NBA_TEAMS[item.game.visitor_team_id - 1].id
+                      : ALL_NBA_TEAMS[item.game.home_team_id - 1].id}
                   </Text>
                   <Text style={styles.mobileStatsCell}>
                     {item.game.home_team_score}-{item.game.visitor_team_score}
@@ -182,7 +186,7 @@ export default function Player() {
   );
 }
 const input = (
-  player: NBAPlayer[],
+  player: NBAPlayer,
   playerSeasonAvgs: NBASeasonAverages[],
   injury: any[],
   data: event | null,
@@ -201,18 +205,20 @@ const input = (
             justifyContent: "space-evenly",
           }}
         >
-          <Text style={styles.playerName}>Nikola Jokic</Text>
+          <Text style={styles.playerName}>
+            {player.first_name + " " + player.last_name}
+          </Text>
           <View
             style={{ flexDirection: "row", justifyContent: "space-around" }}
           >
             <Text style={styles.playerInfo}>
-              {player.length !== 0 ? player[0].team.full_name : ""}
+              {player ? player.team.full_name : ""}
             </Text>
             <Text style={styles.playerInfo}>
-              {player.length !== 0 ? player[0].position : ""}
+              {player ? player.position : ""}
             </Text>
             <Text style={styles.playerInfo}>
-              {player.length !== 0 ? player[0].jersey_number : ""}
+              {player ? player.jersey_number : ""}
             </Text>
           </View>
           <View
@@ -221,19 +227,19 @@ const input = (
             <View style={styles.playerMeasurableRow}>
               <Text style={styles.playerMeasurableHeaders}>HT</Text>
               <Text style={styles.playerMeasurables}>
-                {player.length !== 0 ? player[0].height : ""}
+                {player ? player.height : ""}
               </Text>
             </View>
             <View style={styles.playerMeasurableRow}>
               <Text style={styles.playerMeasurableHeaders}>Country</Text>
               <Text style={styles.playerMeasurables}>
-                {player.length !== 0 ? player[0].country : ""}
+                {player ? player.country : ""}
               </Text>
             </View>
             <View style={styles.playerMeasurableRow}>
               <Text style={styles.playerMeasurableHeaders}>Weight</Text>
               <Text style={styles.playerMeasurables}>
-                {player.length !== 0 ? player[0].weight : ""}
+                {player ? player.weight : ""}
               </Text>
             </View>
           </View>
@@ -283,7 +289,7 @@ const input = (
             <Image
               style={styles.teamLogo}
               resizeMode="contain"
-              source={require("../assets/images/team_logos/Chicago Bulls.png")}
+              source={require(`../assets/images/team_logos/Chicago Bulls.png`)}
             />
             <Text style={styles.vs}>vs.</Text>
             <Image
@@ -408,6 +414,7 @@ const styles = EStyleSheet.create({
     flex: 1,
     textAlign: "center",
     fontFamily: "JosefinSans_400Regular",
+    fontSize: "1.5rem",
   },
   marginFlatList: { marginLeft: "1rem" },
   mobileStatsCell: {
@@ -419,5 +426,6 @@ const styles = EStyleSheet.create({
     width: "6rem",
     textAlign: "center",
     fontFamily: "JosefinSans_400Regular",
+    fontSize: "1.5rem",
   },
 });
