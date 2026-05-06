@@ -1,7 +1,7 @@
 import { NBAPlayer, NBASeasonAverages } from "@balldontlie/sdk";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
-import { Image, Text, useWindowDimensions, View } from "react-native";
+import { Image, Platform, Text, useWindowDimensions, View } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { ScrollView } from "react-native-gesture-handler";
 import { link } from "./_layout";
@@ -109,14 +109,15 @@ export default function Player() {
     >
       <ScrollView contentContainerStyle={{ flexDirection: "column" }}>
         {input(player, playerSeasonAvgs, injury, data)}
-        <View
-          style={{
-            marginHorizontal: 16,
-            marginTop: 16,
-            width: width - 32,
-          }}
-        >
-          <View style={styles.marginFlatList}>
+
+        {Platform.OS !== "ios" && Platform.OS !== "android" ? (
+          <View
+            style={{
+              marginHorizontal: 16,
+              marginTop: 16,
+              width: width - 32,
+            }}
+          >
             <View style={styles.statsHeaderRow}>
               <Text style={styles.headerCell}>Date</Text>
               <Text style={styles.headerCell}>Opp</Text>
@@ -142,7 +143,40 @@ export default function Player() {
               </View>
             ))}
           </View>
-        </View>
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 16 }}
+          >
+            <View>
+              <View style={styles.statsHeaderRow}>
+                <Text style={styles.mobileHeaderCell}>Date</Text>
+                <Text style={styles.mobileHeaderCell}>Opp</Text>
+                <Text style={styles.mobileHeaderCell}>Result</Text>
+                <Text style={styles.mobileHeaderCell}>MIN</Text>
+                <Text style={styles.mobileHeaderCell}>PTS</Text>
+                <Text style={styles.mobileHeaderCell}>REB</Text>
+                <Text style={styles.mobileHeaderCell}>AST</Text>
+              </View>
+              {stats.map((item) => (
+                <View key={item.id.toString()} style={styles.statsRow}>
+                  <Text style={[styles.mobileStatsCell]}>{item.game.date}</Text>
+                  <Text style={styles.mobileStatsCell}>
+                    {ALL_NBA_TEAMS[item.game.visitor_team_id].id}
+                  </Text>
+                  <Text style={styles.mobileStatsCell}>
+                    {item.game.home_team_score}-{item.game.visitor_team_score}
+                  </Text>
+                  <Text style={styles.mobileStatsCell}>{item.min}</Text>
+                  <Text style={styles.mobileStatsCell}>{item.pts}</Text>
+                  <Text style={styles.mobileStatsCell}>{item.reb}</Text>
+                  <Text style={styles.mobileStatsCell}>{item.ast}</Text>
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        )}
       </ScrollView>
     </LinearGradient>
   );
@@ -376,4 +410,14 @@ const styles = EStyleSheet.create({
     fontFamily: "JosefinSans_400Regular",
   },
   marginFlatList: { marginLeft: "1rem" },
+  mobileStatsCell: {
+    width: "6rem",
+    textAlign: "center",
+    fontFamily: "IstokWeb_400Regular",
+  },
+  mobileHeaderCell: {
+    width: "6rem",
+    textAlign: "center",
+    fontFamily: "JosefinSans_400Regular",
+  },
 });
