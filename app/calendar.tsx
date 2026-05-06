@@ -1,6 +1,6 @@
 import groupBy from "lodash/groupBy";
 import React, { Component, useEffect, useState } from "react";
-import { Platform, View } from "react-native";
+import { View } from "react-native";
 import {
   CalendarProvider,
   CalendarUtils,
@@ -13,13 +13,8 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { link } from "./_layout";
 import { useAppSelector } from "./hooks";
-import { sendPushNotification } from "./push_notifications";
+import { event } from "./types";
 
-export type event = {
-  start: string;
-  end: string;
-  title: string;
-};
 const today = new Date();
 export const getDate: (offset: number) => string = (offset = 0) =>
   CalendarUtils.getCalendarDateString(
@@ -79,6 +74,7 @@ class TimelineCalendarScreen extends Component<Props, {}> {
 
   render() {
     const { currentDate, eventsByDate } = this.state;
+
     return (
       <CalendarProvider
         date={currentDate}
@@ -95,14 +91,12 @@ class TimelineCalendarScreen extends Component<Props, {}> {
           markingType="period"
           markedDates={{
             ...this.marked,
-            ...{
-              [currentDate]: {
-                marked: false,
-                customContainerStyle: {
-                  backgroundColor: "#FF0000B3",
-                  width: 30,
-                  height: 30,
-                },
+            [currentDate]: {
+              marked: this.marked[currentDate]?.marked ?? false,
+              customContainerStyle: {
+                backgroundColor: "#FF0000B3",
+                width: 30,
+                height: 30,
               },
             },
           }}
@@ -140,9 +134,21 @@ export default function Index() {
         let response = null;
         response = await fetch(`${link}/calendar/6`);
         console.log(response);
-        let events = await response.json();
+        let events: event[] = await response.json();
         console.log(events);
+        for (let event of events) {
+          const toLocal = (utcStr: string): string => {
+            const date = new Date(utcStr.replace(" ", "T") + "Z");
+            const pad = (n: number) => n.toString().padStart(2, "0");
+            const localDate = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+            const localTime = `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+            return `${localDate} ${localTime}`;
+          };
+          event.start = toLocal(event.start);
+          event.end = toLocal(event.end);
+        }
         setData(events);
+        console.log(events);
       } catch {
         console.log("Failed to fetch data");
         setData([]);
@@ -161,6 +167,7 @@ export default function Index() {
         let broadcasts = [];
         console.log(responsejson.events);
         for (let e of responsejson.events) {
+          console.log(e);
           const [left, right] = e.name.split(" at ");
           const team1 = left.trim().split(" ").pop();
           const team2 = right.trim().split(" ").pop();
@@ -172,12 +179,6 @@ export default function Index() {
           }
         }
         setBroadcasts(broadcasts);
-        if (
-          notifToken !== null &&
-          (Platform.OS === "ios" || Platform.OS === "android")
-        ) {
-          sendPushNotification(notifToken!);
-        }
       } catch {
         console.log("Failed to fetch data");
         setBroadcasts([]);

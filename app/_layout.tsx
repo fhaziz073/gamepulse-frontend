@@ -50,6 +50,7 @@ function StackLayout() {
       <Stack.Protected guard={!!isLoggedIn}>
         <Stack.Screen name="index" options={{ headerTitle: "Home" }} />
         <Stack.Screen name="calendar" options={{ headerTitle: "" }} />
+        <Stack.Screen name="player" options={{ headerTitle: "" }} />
       </Stack.Protected>
     </Stack>
   );

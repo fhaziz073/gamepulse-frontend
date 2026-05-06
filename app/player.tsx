@@ -1,10 +1,13 @@
 import { NBAPlayer, NBASeasonAverages } from "@balldontlie/sdk";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, Text, useWindowDimensions, View } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
+import { ScrollView } from "react-native-gesture-handler";
 import { link } from "./_layout";
-import { event } from "./calendar";
+import { ALL_NBA_TEAMS } from "./teams";
+import { event, game } from "./types";
+
 export default function Player() {
   const [player, setPlayer] = useState<NBAPlayer[]>([]);
   const [playerSeasonAvgs, setPlayerSeasonAvgs] = useState<NBASeasonAverages[]>(
@@ -12,6 +15,8 @@ export default function Player() {
   );
   const [data, setData] = useState<event | null>(null);
   const [injury, setInjury] = useState<any[]>([]);
+  const [stats, setStats] = useState<game[]>([]);
+  const { width } = useWindowDimensions();
   useEffect(() => {
     async function getPlayer() {
       let response = null;
@@ -42,26 +47,21 @@ export default function Player() {
     async function getNextGame() {
       try {
         let response = null;
-        response = await fetch(`${link}/calendar/6`);
+        response = await fetch(`${link}/calendar/${player[0].id}`);
         console.log(response);
         let events = await response.json();
         console.log(events);
-        setData(events[0]);
-      } catch {
-        console.log("Failed to fetch data");
-        setData(null);
-      }
-    }
-    getNextGame();
-  }, [player]);
-  useEffect(() => {
-    async function getNextGame() {
-      try {
-        let response = null;
-        response = await fetch(`${link}/calendar/6`);
-        console.log(response);
-        let events = await response.json();
-        console.log(events);
+        for (let event of events) {
+          const toLocal = (utcStr: string): string => {
+            const date = new Date(utcStr.replace(" ", "T") + "Z");
+            const pad = (n: number) => n.toString().padStart(2, "0");
+            const localDate = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+            const localTime = `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+            return `${localDate} ${localTime}`;
+          };
+          event.start = toLocal(event.start);
+          event.end = toLocal(event.end);
+        }
         setData(events[0]);
       } catch {
         console.log("Failed to fetch data");
@@ -81,21 +81,80 @@ export default function Player() {
         setInjury(injury);
       } catch {
         console.log("Failed to fetch data");
-        setData(null);
+        setInjury([]);
       }
     }
     getPlayerInjury();
   }, [player]);
+  useEffect(() => {
+    async function getStats() {
+      try {
+        let response = null;
+        response = await fetch(`${link}/players/${player[0].id}/stats`);
+        console.log(response);
+        let stats = await response.json();
+        console.log(stats);
+        setStats(stats);
+      } catch {
+        console.log("Failed to fetch data");
+        setStats([]);
+      }
+    }
+    getStats();
+  }, [player]);
   return (
-    <ScrollView
-      style={{ flex: 1, flexDirection: "column" }}
-      contentContainerStyle={{ flexGrow: 1 }}
+    <LinearGradient
+      colors={["rgba(0,0,255,1)", "rgba(255, 236, 0, 1)"]}
+      style={{ flex: 1 }}
     >
-      <LinearGradient
-        // Background Linear Gradient
-        colors={["rgba(0,0,255,1)", "rgba(255, 236, 0, 1)"]}
-        style={{ height: "100%", width: "100%", position: "absolute" }}
-      />
+      <ScrollView contentContainerStyle={{ flexDirection: "column" }}>
+        {input(player, playerSeasonAvgs, injury, data)}
+        <View
+          style={{
+            marginHorizontal: 16,
+            marginTop: 16,
+            width: width - 32,
+          }}
+        >
+          <View style={styles.marginFlatList}>
+            <View style={styles.statsHeaderRow}>
+              <Text style={styles.headerCell}>Date</Text>
+              <Text style={styles.headerCell}>Opp</Text>
+              <Text style={styles.headerCell}>Result</Text>
+              <Text style={styles.headerCell}>MIN</Text>
+              <Text style={styles.headerCell}>PTS</Text>
+              <Text style={styles.headerCell}>REB</Text>
+              <Text style={styles.headerCell}>AST</Text>
+            </View>
+            {stats.map((item) => (
+              <View key={item.id.toString()} style={styles.statsRow}>
+                <Text style={[styles.statsCell]}>{item.game.date}</Text>
+                <Text style={styles.statsCell}>
+                  {ALL_NBA_TEAMS[item.game.visitor_team_id].id}
+                </Text>
+                <Text style={styles.statsCell}>
+                  {item.game.home_team_score}-{item.game.visitor_team_score}
+                </Text>
+                <Text style={styles.statsCell}>{item.min}</Text>
+                <Text style={styles.statsCell}>{item.pts}</Text>
+                <Text style={styles.statsCell}>{item.reb}</Text>
+                <Text style={styles.statsCell}>{item.ast}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </LinearGradient>
+  );
+}
+const input = (
+  player: NBAPlayer[],
+  playerSeasonAvgs: NBASeasonAverages[],
+  injury: any[],
+  data: event | null,
+) => {
+  return (
+    <View style={{ flexShrink: 1, flexDirection: "column" }}>
       <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
         <Image
           style={styles.playerImage}
@@ -207,44 +266,10 @@ export default function Player() {
       ) : (
         <View></View>
       )}
-      <View style={styles.statsContainer}>
-        <View style={{ flexDirection: "column" }}>
-          <Text style={styles.statsText}>Date</Text>
-          <Text style={styles.statsText}>12/29</Text>
-          <Text style={styles.statsText}>12/27</Text>
-          <Text style={styles.statsText}>12/25</Text>
-          <Text style={styles.statsText}>12/23</Text>
-        </View>
-        <View style={{ flexDirection: "column" }}>
-          <Text style={styles.statsText}>Opp</Text>
-          <Text style={styles.statsText}>@MIA</Text>
-          <Text style={styles.statsText}>@ORL</Text>
-          <Text style={styles.statsText}>vs MIN</Text>
-          <Text style={styles.statsText}>@DAL</Text>
-        </View>
-        <View style={{ flexDirection: "column" }}>
-          <Text style={styles.statsText}>Result</Text>
-          <Text style={styles.statsText}>L 147-123</Text>
-          <Text style={styles.statsText}>L 127-126</Text>
-          <Text style={styles.statsText}>W 142-138</Text>
-          <Text style={styles.statsText}>L 131-130</Text>
-        </View>
-        <View style={{ flexDirection: "column" }}>
-          <Text style={styles.statsText}>MIN</Text>
-          <Text style={styles.statsText}>19</Text>
-          <Text style={styles.statsText}>38</Text>
-          <Text style={styles.statsText}>43</Text>
-          <Text style={styles.statsText}>36</Text>
-        </View>
-      </View>
-    </ScrollView>
+    </View>
   );
-}
-
+};
 const styles = EStyleSheet.create({
-  statsText: {
-    fontFamily: "JosefinSans_400Regular",
-  },
   container: {
     overflow: "hidden",
     borderRadius: 3,
@@ -258,13 +283,11 @@ const styles = EStyleSheet.create({
   statsContainer: {
     overflow: "hidden",
     borderRadius: 3,
-    alignItems: "center",
-    justifyContent: "space-around",
     backgroundColor: "white",
     marginTop: "1rem",
     marginLeft: "1rem",
     marginRight: "1rem",
-    flexDirection: "row",
+    flexDirection: "column",
   },
   playerName: {
     color: "white",
@@ -327,4 +350,30 @@ const styles = EStyleSheet.create({
     backgroundColor: "red",
   },
   teamLogo: { height: "5rem", maxWidth: "5rem" },
+  statsHeaderRow: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
+    backgroundColor: "white",
+    borderTopLeftRadius: 3,
+    borderTopRightRadius: 3,
+    marginTop: "1rem",
+    fontFamily: "JosefinSans_400Regular",
+  },
+  statsRow: {
+    flexDirection: "row",
+    paddingVertical: "0.25rem",
+    backgroundColor: "white",
+  },
+  statsCell: {
+    flex: 1,
+    textAlign: "center",
+    fontFamily: "IstokWeb_400Regular",
+  },
+  headerCell: {
+    flex: 1,
+    textAlign: "center",
+    fontFamily: "JosefinSans_400Regular",
+  },
+  marginFlatList: { marginLeft: "1rem" },
 });
