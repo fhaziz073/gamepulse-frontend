@@ -40,12 +40,15 @@ export default function GameScreen() {
     { name: "L. Shamet", pts: 3, ast: 3, reb: 3 },
   ];
 
+
+  
   return (
     <View style={styles.container}>
       {/* 🔙 Back Button */}
       <TouchableOpacity onPress={() => router.back()}>
         <Text style={styles.back}>← Back</Text>
       </TouchableOpacity>
+      
 
       {/* 🏀 Game Title */}
       <Text style={styles.title}>
@@ -92,33 +95,66 @@ export default function GameScreen() {
 
       {/* ⭐ Top Players */}
       <Text style={styles.section}>Top Players</Text>
-
       <View style={styles.topPlayers}>
         {topPlayers.map((p, i) => (
-          <View key={i} style={styles.playerCard}>
-            <Text style={styles.playerName}>{p.name}</Text>
-            <Text>{p.pts} Pts.</Text>
-          </View>
-        ))}
+        <TouchableOpacity
+          key={i}
+          style={styles.playerCard}
+          onPress={() =>
+            router.push({
+              pathname: "/player",
+              params: { playerId: i},
+            })
+          }
+        >
+          <Text style={styles.playerName}>{p.name}</Text>
+          <Text>{p.pts} Pts.</Text>
+        </TouchableOpacity>
+      ))}
       </View>
 
       {/* 📊 Stats Table */}
       <View style={styles.table}>
         <View style={styles.rowHeader}>
-          <Text>Name</Text>
-          <Text>Pts.</Text>
-          <Text>Ast.</Text>
-          <Text>Reb.</Text>
+        <View style={[styles.cell, styles.nameCol]}>
+          <Text style={styles.nameText}>Name</Text>
         </View>
+        <View style={styles.cell}>
+          <Text style={styles.centerText}>Pts.</Text>
+        </View>
+        <View style={styles.cell}>
+          <Text style={styles.centerText}>Ast.</Text>
+        </View>
+        <View style={styles.cell}>
+          <Text style={styles.centerText}>Reb.</Text>
+        </View>
+      </View>
+ 
+      {stats.map((p, i) => (
+        <View key={i} style={styles.row}>
+          <TouchableOpacity
+            style={[styles.cell, styles.nameCol]}
+            onPress={() =>
+              router.push({
+                pathname: "/player",
+                params: { playerId: i },
+              })
+            }
+          >
+            <Text style={styles.nameText}>{p.name}</Text>
+          </TouchableOpacity>
 
-        {stats.map((p, i) => (
-          <View key={i} style={styles.row}>
-            <Text style={styles.name}>{p.name}</Text>
-            <Text>{p.pts}</Text>
-            <Text>{p.ast}</Text>
-            <Text>{p.reb}</Text>
-          </View>
-        ))}
+          <View style={styles.cell}>
+          <Text style={styles.centerText}>{p.pts}</Text>
+        </View>
+        <View style={styles.cell}>
+          <Text style={styles.centerText}>{p.ast}</Text>
+        </View>
+        <View style={styles.cell}>
+          <Text style={styles.centerText}>{p.reb}</Text>
+        </View>
+        </View>
+      ))}
       </View>
     </View>
   );
@@ -187,15 +223,30 @@ const styles = StyleSheet.create({
   },
   rowHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
     marginBottom: 8,
   },
   row: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 4,
+    marginBottom: 6,
   },
   name: {
     width: 120,
+  },
+    nameCol: {
+    flex: 2,
+  },
+
+  cell: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center", // center everything by default
+  },
+
+  nameText: {
+    alignSelf: "flex-start", // 👈 forces left alignment
+  },
+
+  centerText: {
+    textAlign: "center",
   },
 });
