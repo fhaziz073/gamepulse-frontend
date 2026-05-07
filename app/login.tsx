@@ -1,4 +1,5 @@
 import { setUserInfo } from "@/features/stateSlice";
+import { font } from "@/theme";
 import { Dispatch, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { Link } from "expo-router";
 import { useState } from "react";
@@ -7,6 +8,7 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import { PersistPartial } from "redux-persist/es/persistReducer";
 import { link } from "./_layout";
 import { useAppDispatch } from "./hooks";
+
 async function login(
   username: string,
   password: string,
@@ -50,7 +52,7 @@ export default function Index() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#00ced1",
+        backgroundColor: "#0f172a",
       }}
     >
       <Text style={styles.header}>Sign in to Gamepulse</Text>
@@ -72,23 +74,33 @@ export default function Index() {
       >
         <Text>Submit</Text>
       </Pressable>
-      <Link href={"/signup"}>No Account? Create One</Link>
+      <Link href={"/signup"} style={styles.title}>No Account? Create One</Link>
     </View>
   );
 }
 const styles = EStyleSheet.create({
   container: {
+    borderWidth: 1,
+    borderColor: 'black',
     backgroundColor: "white",
     padding: "1rem",
-    margin: "1rem",
+    margin: "1rem"
   },
   button: {
-    backgroundColor: "#045c5a",
-    color: "white",
+    borderWidth: 1,
+    borderColor: 'black',
+    backgroundColor: "#FFFFFF",
     padding: "1rem",
-    margin: "1rem",
+    margin: "1rem"
   },
   header: {
     fontSize: "2rem",
+    color: "#FFFFFF",
+    fontFamily: font.bold
   },
+  title: {
+    fontSize: 15,
+    color: "#FAF9F6",
+    fontFamily: font.regular
+  }
 });

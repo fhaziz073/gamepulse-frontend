@@ -8,6 +8,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { useAppSelector } from "./hooks";
 import { store } from "./store";
@@ -31,9 +32,11 @@ export default function RootLayout() {
     return null;
   }
   return (
-    <Provider store={store}>
-      <StackLayout />
-    </Provider>
+    <GestureHandlerRootView>
+      <Provider store={store}>
+        <StackLayout />
+      </Provider>
+    </GestureHandlerRootView>
   );
 }
 function StackLayout() {
@@ -41,12 +44,48 @@ function StackLayout() {
   return (
     <Stack>
       <Stack.Protected guard={!isLoggedIn}>
-        <Stack.Screen name="login" />
-        <Stack.Screen name="signup" />
+        <Stack.Screen
+          name="login"
+          options={{ headerShown: false, headerTitle: "Login" }}
+        />
+        <Stack.Screen
+          name="signup"
+          options={{ headerShown: false, headerTitle: "Sign Up" }}
+        />
       </Stack.Protected>
       <Stack.Protected guard={!!isLoggedIn}>
-        <Stack.Screen name="index" options={{ headerTitle: "Home" }} />
-        <Stack.Screen name="calendar" options={{ headerTitle: "" }} />
+        <Stack.Screen
+          name="index"
+          options={{ headerShown: false, headerTitle: "Home" }}
+        />
+        <Stack.Screen
+          name="calendar"
+          options={{ headerShown: false, headerTitle: "Calendar" }}
+        />
+        <Stack.Screen
+          name="player"
+          options={{ headerShown: false, headerTitle: "Player" }}
+        />
+        <Stack.Screen
+          name="visualization"
+          options={{ headerShown: false, headerTitle: "Stat Analytics" }}
+        />
+        <Stack.Screen
+          name="team_select"
+          options={{ headerShown: false, headerTitle: "Teams" }}
+        />
+        <Stack.Screen
+          name="team"
+          options={{ headerShown: false, headerTitle: "Team" }}
+        />
+        <Stack.Screen
+          name="game"
+          options={{ headerShown: false, headerTitle: "Game" }}
+        />
+        <Stack.Screen
+          name="profile"
+          options={{ headerShown: false, headerTitle: "Profile" }}
+        />
       </Stack.Protected>
     </Stack>
   );
