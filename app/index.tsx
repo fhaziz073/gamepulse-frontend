@@ -1,32 +1,39 @@
-import { setUserInfo } from "@/features/stateSlice";
 import { font } from "@/theme";
+import { NBAGame } from "@balldontlie/sdk";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SectionList, Text, TouchableOpacity, View } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { useAppDispatch } from "./hooks";
+import { link } from "./_layout";
+import { useAppSelector } from "./hooks";
 
-const DATA = [
-  {
-    title: "Your Teams",
-    data: [
-      "NYK 95   3rd 5:42   72 GSW",
-      "CHI 17   1st 13:50   15 MIN",
-      "SAS   10:30 PM   LAL",
-    ],
-  },
-  {
-    title: "Today's Games",
-    data: ["DEN 95   3rd 5:42   72 IDK", "CHI 17   1st 13:50   15 MIN"],
-  },
-];
-
-const App = () => (
+// const DATA = [
+//   {
+//     title: "Your Teams",
+//     data: [
+//       "NYK 95   3rd 5:42   72 GSW",
+//       "CHI 17   1st 13:50   15 MIN",
+//       "SAS   10:30 PM   LAL",
+//     ],
+//   },
+//   {
+//     title: "Today's Games",
+//     data: ["DEN 95   3rd 5:42   72 IDK", "CHI 17   1st 13:50   15 MIN"],
+//   },
+// ];
+interface AppProps {
+  yourTeams: string[];
+  todaysGames: string[];
+}
+const App = ({ yourTeams, todaysGames }: AppProps) => (
   <SafeAreaProvider>
     <SafeAreaView style={styles.container} edges={["top"]}>
       <SectionList
-        sections={DATA}
+        sections={[
+          // { title: "Your Teams", data: yourTeams },
+          { title: "Today's Games", data: todaysGames },
+        ]}
         keyExtractor={(item, index) => item + index}
         renderItem={({ item }) => (
           <View style={styles.item}>
@@ -43,7 +50,34 @@ const App = () => (
 
 export default function Index() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
+  const [yourTeams, setYourTeams] = useState<string[]>([]);
+  const [todaysGames, setTodaysGames] = useState<string[]>([]);
+  const userInfo = useAppSelector((state) => state.userInfo);
+  useEffect(() => {
+    async function getGames() {
+      console.log(userInfo?.preference);
+      for (let team of userInfo!.preference.favTeams) {
+        let response = null;
+        response = await fetch(`${link}/calendar/${team}`);
+        let events = await response.json();
+        console.log(events);
+      }
+      let response2 = await fetch(`${link}/calendar/today`);
+      let todayGs: NBAGame[] = await response2.json();
+      let finalTG: string[] = [];
+      for (let g of todayGs) {
+        finalTG.push(
+          g.home_team.abbreviation +
+            " " +
+            new Date(g.status).toLocaleTimeString() +
+            " " +
+            g.visitor_team.abbreviation,
+        );
+      }
+      setTodaysGames([...finalTG]);
+    }
+    getGames();
+  }, [userInfo]);
   return (
     <SafeAreaProvider>
       <SafeAreaView
@@ -58,7 +92,7 @@ export default function Index() {
           backgroundColor: "#0f172a",
         }}
       >
-        <App></App>
+        <App yourTeams={yourTeams} todaysGames={todaysGames} />
       </SafeAreaView>
       <SafeAreaView
         style={{
@@ -81,8 +115,8 @@ export default function Index() {
         <TouchableOpacity onPress={() => router.navigate("/team_select")}>
           <Text style={styles.menuButton}>Teams</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => dispatch(setUserInfo(null))}>
-          <Text style={styles.menuButton}>Log Out</Text>
+        <TouchableOpacity onPress={() => router.navigate("/profile")}>
+          <Text style={styles.menuButton}>Profile</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </SafeAreaProvider>

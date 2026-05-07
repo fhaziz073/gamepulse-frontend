@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { PersistPartial } from "redux-persist/es/persistReducer";
 import { link } from "./_layout";
 import { useAppDispatch } from "./hooks";
@@ -67,8 +68,23 @@ async function signup(
   });
   console.log(response);
   if (response !== null && response.status === 201) {
-    const json = await response.json();
-    dispatch(setUserInfo(json));
+    const authHeader = "Basic " + btoa(`${username}:${password}`);
+    response = await fetch(`${link}/auth/login`, {
+      method: "POST",
+      headers: {
+        Authorization: authHeader,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
+    if (response !== null && response.status === 201) {
+      let data = await response.json();
+      console.log(data);
+      dispatch(setUserInfo(data));
+    }
   }
 }
 
@@ -81,7 +97,7 @@ export default function Index() {
   const [isNotifed, changeNotifedStatus] = useState(false);
   const dispatch = useAppDispatch();
   return (
-    <View
+    <SafeAreaView
       style={{
         flex: 1,
         justifyContent: "center",
@@ -146,34 +162,36 @@ export default function Index() {
           <Text>Submit</Text>
         </Pressable>
       </ScrollView>
-      <Link href={"/login"} style={styles.title}>Have an existing account? Login</Link>
-    </View>
+      <Link href={"/login"} style={styles.title}>
+        Have an existing account? Login
+      </Link>
+    </SafeAreaView>
   );
 }
 const styles = EStyleSheet.create({
   container: {
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: "black",
     backgroundColor: "white",
     padding: "1rem",
     margin: "1rem",
   },
   button: {
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: "black",
     backgroundColor: "#FFFFFF",
     color: "white",
     padding: "1rem",
-    margin: "3rem"
+    margin: "3rem",
   },
   header: {
     fontSize: "2rem",
     color: "#FFFFFF",
-    fontFamily: font.bold
+    fontFamily: font.bold,
   },
   title: {
     fontSize: 15,
     color: "#FAF9F6",
-    fontFamily: font.regular
-  }
+    fontFamily: font.regular,
+  },
 });

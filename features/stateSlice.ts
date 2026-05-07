@@ -6,6 +6,13 @@ type UserInfo = {
   "Avatar URL": string;
   "Creation Time": Date;
   "Notification Token": string;
+  preference: {
+    favTeams: number[];
+    favPlayers: number[];
+    ongoingGameNotifPref: boolean;
+    gameStartNotifPref: boolean;
+    id: string;
+  };
 };
 interface CounterState {
   userInfo: UserInfo | null;
