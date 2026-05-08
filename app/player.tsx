@@ -336,14 +336,14 @@ const input = (
           </View>
         </View>
       </View>
-      {injury.length !== 0 ? (
+      {/* {injury.length !== 0 ? (
         <View style={styles.injuryBar}>
           <Text style={styles.injuryText}>INJURY STATUS</Text>
           <Text style={styles.injuryText}>OUT</Text>
         </View>
       ) : (
         <View></View>
-      )}
+      )} */}
       <View style={styles.container}>
         <Text style={styles.seasonAvg}>2025-2026 Season Average</Text>
         <View style={{ flexDirection: "row", gap: 20 }}>
