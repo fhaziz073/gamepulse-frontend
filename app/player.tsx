@@ -339,7 +339,7 @@ const input = (
       {injury.length !== 0 ? (
         <View style={styles.injuryBar}>
           <Text style={styles.injuryText}>INJURY STATUS</Text>
-          <Text style={styles.injuryText}>OUT (KNEE)</Text>
+          <Text style={styles.injuryText}>OUT</Text>
         </View>
       ) : (
         <View></View>
