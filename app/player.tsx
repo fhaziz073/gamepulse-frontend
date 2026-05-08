@@ -27,13 +27,15 @@ export default function Player() {
   const [injury, setInjury] = useState<any[]>([]);
   const [stats, setStats] = useState<game[]>([]);
   const { width } = useWindowDimensions();
+  const [topColor, setTopColor] = useState<string>("rgba(255,255,255,1)");
+  const [bottomColor, setBottomColor] = useState<string>("rgba(255,255,255,1)");
+
   useEffect(() => {
     async function getPlayer() {
       let response = null;
       response = await fetch(`${link}/players/${playerId}`);
       console.log(response);
       let players = await response.json();
-      console.log(players);
       setPlayer(players);
     }
     getPlayer();
@@ -108,11 +110,16 @@ export default function Player() {
     }
     getStats();
   }, [player]);
+  useEffect(() => {
+    if (player) {
+      setTopColor(ALL_NBA_TEAMS[player.team.id - 1].topColor);
+      setBottomColor(ALL_NBA_TEAMS[player.team.id - 1].bottomColor);
+      console.log(topColor);
+      console.log(bottomColor);
+    }
+  }, [player, topColor, bottomColor]);
   return (
-    <LinearGradient
-      colors={["rgba(0,0,255,1)", "rgba(255, 236, 0, 1)"]}
-      style={{ flex: 1 }}
-    >
+    <LinearGradient colors={[topColor, bottomColor]} style={{ flex: 1 }}>
       <SafeAreaView>
         <View>
           <TouchableOpacity onPress={() => router.back()}>
