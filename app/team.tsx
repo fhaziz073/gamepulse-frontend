@@ -29,7 +29,6 @@ export default function TeamScreen() {
     setNextGame(game);
   };
 
-  // 👤 Player row
   const renderPlayer = ({ item }: { item: NBAPlayer }) => (
     <TouchableOpacity
       style={styles.playerRow}
@@ -50,17 +49,12 @@ export default function TeamScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* 🔙 Back Button */}
       <TouchableOpacity onPress={() => router.back()}>
         <Text style={styles.backButton}>← Back</Text>
       </TouchableOpacity>
-
-      {/* 🏀 Team Header */}
       <Text style={styles.teamName}>
         {players.length > 0 ? players[0].team.full_name : ""}
       </Text>
-
-      {/* 📅 Next Game */}
       {nextGame && (
         <TouchableOpacity
           style={styles.gameCard}
@@ -76,8 +70,6 @@ export default function TeamScreen() {
           <Text>{new Date(nextGame.start).toLocaleString()}</Text>
         </TouchableOpacity>
       )}
-
-      {/* 👥 Player List */}
       <Text style={styles.sectionTitle}>Roster</Text>
 
       <FlatList
