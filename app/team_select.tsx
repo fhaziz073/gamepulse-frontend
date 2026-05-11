@@ -8,7 +8,6 @@ import { ALL_NBA_TEAMS } from "./teams";
 export default function TeamsScreen() {
   const router = useRouter();
 
-  //Placeholder list
   const teams = ALL_NBA_TEAMS;
 
   const renderTeam = ({ item }: { item: (typeof ALL_NBA_TEAMS)[0] }) => (
@@ -27,22 +26,17 @@ export default function TeamsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* 🔙 Back Button */}
       <TouchableOpacity onPress={() => router.back()}>
         <Text style={styles.backButton}>← Back</Text>
       </TouchableOpacity>
 
-      {/* 🏀 Title */}
       <Text style={styles.title}>Select a Team</Text>
 
-      {/* 📋 Team List */}
       <FlatList
         data={teams}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderTeam}
       />
-
-      {/* 🔽 Bottom Navigation (match your index.tsx) */}
       <View style={styles.navBar}>
         <TouchableOpacity onPress={() => router.navigate("/calendar")}>
           <Text style={styles.menuButton}>Calendar</Text>
