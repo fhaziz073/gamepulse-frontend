@@ -30,6 +30,7 @@ export default function TeamScreen() {
   };
 
   const renderPlayer = ({ item }: { item: NBAPlayer }) => (
+    /* Used ChatGPT for assistance with debugging this section*/
     <TouchableOpacity
       style={styles.playerRow}
       onPress={() =>

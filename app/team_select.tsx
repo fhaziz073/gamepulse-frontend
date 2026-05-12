@@ -8,7 +8,6 @@ import { ALL_NBA_TEAMS } from "./teams";
 export default function TeamsScreen() {
   const router = useRouter();
 
-  //Placeholder list
   const teams = ALL_NBA_TEAMS;
 
   const renderTeam = ({ item }: { item: (typeof ALL_NBA_TEAMS)[0] }) => (
@@ -26,6 +25,7 @@ export default function TeamsScreen() {
   );
 
   return (
+    /* Used ChatGPT for assistance with debugging this section*/
     <SafeAreaView style={styles.container}>
       <TouchableOpacity onPress={() => router.back()}>
         <Text style={styles.backButton}>← Back</Text>
